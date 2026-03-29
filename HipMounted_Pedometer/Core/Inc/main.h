@@ -59,16 +59,34 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOF
+#define X_OUT_Pin GPIO_PIN_0
+#define X_OUT_GPIO_Port GPIOA
+#define Y_OUT_Pin GPIO_PIN_1
+#define Y_OUT_GPIO_Port GPIOA
 #define USART2_TX_Pin GPIO_PIN_2
 #define USART2_TX_GPIO_Port GPIOA
 #define USART2_RX_Pin GPIO_PIN_3
 #define USART2_RX_GPIO_Port GPIOA
+#define Z_OUT_Pin GPIO_PIN_4
+#define Z_OUT_GPIO_Port GPIOA
 #define LED_GREEN_Pin GPIO_PIN_5
 #define LED_GREEN_GPIO_Port GPIOA
+#define LED_G_PWN_Pin GPIO_PIN_0
+#define LED_G_PWN_GPIO_Port GPIOB
+#define ST_PIN_Pin GPIO_PIN_1
+#define ST_PIN_GPIO_Port GPIOB
+#define LED_R_PWN_Pin GPIO_PIN_8
+#define LED_R_PWN_GPIO_Port GPIOA
+#define LED_O_PWN_Pin GPIO_PIN_9
+#define LED_O_PWN_GPIO_Port GPIOA
+#define LED_Y_PWN_Pin GPIO_PIN_10
+#define LED_Y_PWN_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define Button_IN_Pin GPIO_PIN_4
+#define Button_IN_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
