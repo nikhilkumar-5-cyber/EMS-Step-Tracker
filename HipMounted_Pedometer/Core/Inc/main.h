@@ -73,8 +73,8 @@ void Error_Handler(void);
 #define LED_GREEN_GPIO_Port GPIOA
 #define LED_G_PWN_Pin GPIO_PIN_0
 #define LED_G_PWN_GPIO_Port GPIOB
-#define ST_PIN_Pin GPIO_PIN_1
-#define ST_PIN_GPIO_Port GPIOB
+#define ST_PIN_CONTROL_Pin GPIO_PIN_1
+#define ST_PIN_CONTROL_GPIO_Port GPIOB
 #define LED_R_PWN_Pin GPIO_PIN_8
 #define LED_R_PWN_GPIO_Port GPIOA
 #define LED_O_PWN_Pin GPIO_PIN_9
@@ -85,8 +85,10 @@ void Error_Handler(void);
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
-#define Button_IN_Pin GPIO_PIN_4
-#define Button_IN_GPIO_Port GPIOB
+#define Button_IN_ST_Pin GPIO_PIN_3
+#define Button_IN_ST_GPIO_Port GPIOB
+#define Button_IN_RESET_Pin GPIO_PIN_4
+#define Button_IN_RESET_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
