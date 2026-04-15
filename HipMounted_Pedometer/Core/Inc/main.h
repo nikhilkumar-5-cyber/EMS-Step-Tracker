@@ -69,14 +69,14 @@ void Error_Handler(void);
 #define USART2_RX_GPIO_Port GPIOA
 #define Z_OUT_Pin GPIO_PIN_4
 #define Z_OUT_GPIO_Port GPIOA
+#define LED_RED_Pin GPIO_PIN_7
+#define LED_RED_GPIO_Port GPIOA
 #define LED_GREEN_Pin GPIO_PIN_0
 #define LED_GREEN_GPIO_Port GPIOB
 #define ST_PIN_CONTROL_Pin GPIO_PIN_1
 #define ST_PIN_CONTROL_GPIO_Port GPIOB
 #define Button_IN_ST_Pin GPIO_PIN_14
 #define Button_IN_ST_GPIO_Port GPIOB
-#define LED_RED_Pin GPIO_PIN_8
-#define LED_RED_GPIO_Port GPIOA
 #define LED_ORANGE_Pin GPIO_PIN_9
 #define LED_ORANGE_GPIO_Port GPIOA
 #define LED_YELLOW_Pin GPIO_PIN_7
