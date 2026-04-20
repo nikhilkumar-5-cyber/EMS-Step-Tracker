@@ -40,10 +40,17 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+int isADCFinished = 0;
+
 void ST_protocol(void) {
+	// Store raw X, Y and Z values in a array
+	u_int32_t ADC_VAL[3];
 	// Expected mV change for X,Y and Z
 	const int expected_X = -325;
 	const int expected_Y = 325;
@@ -63,8 +70,19 @@ void ST_protocol(void) {
 
 	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {
 		// get current X,Y and Z values
+		get_ADC_Values(&ADC_VAL);
+		old_X = conversion(ADC_VAL[0]);
+		old_Y = conversion(ADC_VAL[1]);
+		old_Z = conversion(ADC_VAL[2]);
 		// Activate ADXL ST Pin
+		HAL_GPIO_TogglePin(GPIOB, GPIO_Pin_1);
 		// get the new X,Y and Z values
+		get_ADC_Values(&ADC_VAL);
+		new_X = conversion(ADC_VAL[0]);
+		new_Y = conversion(ADC_VAL[1]);
+		new_Z = conversion(ADC_VAL[2]);
+		// Disable ADXL ST Pin
+		HAL_GPIO_TogglePin(GPIOB, GPIO_Pin_1);
 
 		// Calculate the difference between old and new values
 		X_diff = new_X - old_X;
@@ -76,16 +94,35 @@ void ST_protocol(void) {
 			return;
 		}
 
+		// Display "Not Working" on OLED
 		return;
 	}
 }
 
+u_int32_t get_ADC_Values(u_int32_t* ADC_VAL) {
+	// Function reads the ADC values of X, Y and Z and puts it in the ADC_VAL array
+	HAL_ADC_Start_DMA(&hadc1, *ADC_VAL, 3);
+	while (isADCFinished != 1) {}
+	isADCFinshed = 0;
+}
+
+void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc) {
+	isADCFinished = 1;
+}
+
+int conversion(u_int32_t ADC_val) {
+	// Converts value
+	int converted_val = ADC_val*(5/4095); // Just random, I'll fix later
+	return converted_val;
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -124,7 +161,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -181,6 +220,83 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.NbrOfConversion = 3;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.OversamplingMode = DISABLE;
+  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = ADC_REGULAR_RANK_2;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = ADC_REGULAR_RANK_3;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -229,6 +345,22 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -254,12 +386,6 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : X_OUT_Pin Y_OUT_Pin Z_OUT_Pin */
-  GPIO_InitStruct.Pin = X_OUT_Pin|Y_OUT_Pin|Z_OUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_RED_Pin LED_ORANGE_Pin */
   GPIO_InitStruct.Pin = LED_RED_Pin|LED_ORANGE_Pin;
