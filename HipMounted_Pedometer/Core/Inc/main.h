@@ -71,8 +71,6 @@ void Error_Handler(void);
 #define Z_OUT_GPIO_Port GPIOA
 #define LED_RED_Pin GPIO_PIN_7
 #define LED_RED_GPIO_Port GPIOA
-#define LED_GREEN_Pin GPIO_PIN_0
-#define LED_GREEN_GPIO_Port GPIOB
 #define ST_PIN_CONTROL_Pin GPIO_PIN_1
 #define ST_PIN_CONTROL_GPIO_Port GPIOB
 #define Button_IN_ST_Pin GPIO_PIN_14
