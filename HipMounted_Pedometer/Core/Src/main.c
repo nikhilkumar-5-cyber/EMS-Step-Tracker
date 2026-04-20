@@ -43,6 +43,42 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+void ST_protocol(void) {
+	// Expected mV change for X,Y and Z
+	const int expected_X = -325;
+	const int expected_Y = 325;
+	const int expected_Z = 550;
+	// Variables to store old X,Y and Z values
+	volatile int old_X;
+	volatile int old_Y;
+	volatile int old_Z;
+	// Variables to store new X,Y and Z values
+	volatile int new_X;
+	volatile int new_Y;
+	volatile int new_Z;
+	// Difference in old and new X,Y and Z values
+	volatile int X_diff;
+	volatile int Y_diff;
+	volatile int Z_diff;
+
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {
+		// get current X,Y and Z values
+		// Activate ADXL ST Pin
+		// get the new X,Y and Z values
+
+		// Calculate the difference between old and new values
+		X_diff = new_X - old_X;
+		Y_diff = new_Y - old_Y;
+		Z_diff = new_Z - old_Z;
+
+		if (X_diff == expected_X && Y_diff == expected_Y && Z_diff == expected_Z) {
+			// Display "Working" on OLED
+			return;
+		}
+
+		return;
+	}
+}
 
 /* USER CODE END PV */
 
@@ -251,6 +287,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_YELLOW_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF6_I2C1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
