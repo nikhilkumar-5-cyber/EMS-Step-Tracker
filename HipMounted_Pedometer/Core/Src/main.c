@@ -48,15 +48,25 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 int isADCFinished = 0;
 u_int32_t ADC_VAL[3]; // Store raw X, Y and Z values in a array
+
 const float zero_gVal = 1351.68; // ADC value at 0g
 const float ADC_per_gVal = 450.56; // The ADC value between a difference in 1 g
 volatile int x;
 volatile int y;
 volatile int z;
 
-volatile int stepCount; // Stores the count of steps
+volatile int stepCount = 0; // Stores the count of steps
 volatile int prevStepCount; // Stores the previous step count
 volatile int stepCountTimeDiff; // Difference in time when new step count is calculated
+volatile float distanceTravelled = 0; // Distance travelled [m]
+
+typedef enum {
+	STATIC,
+	WALKING,
+	RUNNING
+} WalkingPace;
+
+WalkingPace walkingPace = STATIC;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,16 +94,16 @@ static void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc);
 
 void getValues(void) {
 	get_ADC_Values();
-	x = conversion(ADC_VAL[0]);
-	y = conversion(ADC_VAL[1]);
-	z = conversion(ADC_VAL[2]);
+	x = ADC_to_g(ADC_VAL[0]);
+	y = ADC_to_g(ADC_VAL[1]);
+	z = ADC_to_g(ADC_VAL[2]);
 }
 
 void stepTracking(void) {
 	// Insert Step tracking logic
 
 	prevStepCount = stepCount;
-	stepCount = 0; // FIX - New step count
+	stepCount += 0; // FIX - New step count
 	stepCountTimeDiff = HAL_GetTick() - stepCountTimeDiff;
 }
 
@@ -101,18 +111,21 @@ void walkingPace(void) {
 	const int walkingFreqMax = 0; // FIX
 	volatile int stepFrequency = (stepCount-prevStepCount)/stepCountTimeDiff;
 	if (stepFrequency == 0) { // Checks if there hasn't been movement
+		walkingPace = STATIC;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_SET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else if (stepFrequency < walkingFreqMax) { // Checks if Pace is walking
+		walkingPace = WALKING;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_SET); // Orange LED (walking)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else { // Pace is running
+		walkingPace = RUNNING;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
@@ -122,29 +135,30 @@ void walkingPace(void) {
 }
 
 void ST_protocol(void) {
-	// Expected mV change for X,Y and Z (FIX - different expected values at 3.3V)
-	const int expected_X = -325;
-	const int expected_Y = 325;
-	const int expected_Z = 550;
+	// Expected g change for X,Y and Z (FIX - different expected values at 3.3V)
+	const float expected_X = -325;
+	const float expected_Y = 325;
+	const float expected_Z = 550;
 
 	// Convert the current X, Y, Z values to mV
-	volatile int old_x = ADC_to_g(x);
-	volatile int old_y = ADC_to_g(y);
-	volatile int old_z = ADC_to_g(z);
+	get_ADC_Values();
+	volatile float old_x = x;
+	volatile float old_y = y;
+	volatile float old_z = z;
 	// Activate ADXL ST Pin
 	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_SET);
 	// get the new X,Y and Z values and convert them to mV
 	get_ADC_Values();
-	volatile int new_x = ADC_to_g(ADC_VAL[0]);
-	volatile int new_y = ADC_to_g(ADC_VAL[1]);
-	volatile int new_z = ADC_to_g(ADC_VAL[2]);
+	volatile float new_x = x;
+	volatile float new_y = y;
+	volatile float new_z = z;
 	// Disable ADXL ST Pin
 	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_RESET);
 
 	// Calculate the difference between old and new values
-	volatile int x_diff = new_x - old_x;
-	volatile int y_diff = new_y - old_y;
-	volatile int z_diff = new_z - old_z;
+	volatile float x_diff = new_x - old_x;
+	volatile float y_diff = new_y - old_y;
+	volatile float z_diff = new_z - old_z;
 
 	if ((x_diff >= expected_X+(0.1*expected_X) && x_diff <= expected_X-(0.1*expected_X)) &&
 		(y_diff >= expected_Y+(0.1*expected_Y) && y_diff <= expected_Y-(0.1*expected_Y)) &&
@@ -158,9 +172,22 @@ void ST_protocol(void) {
 
 void calibration(void) {
 	HAL_Delay(200);
+	int size = sizeof(ADC_VAL)/sizeof(ADC_VAL[0]);
+	for (int i=0; i<size; i++) {
+		float modVal = ADC_to_g(ADC_VAL[i]);
+	}
 }
 
-void distanceTravelled(void) {}
+void distanceTravelled(void) {
+	switch (walkingPace) {
+		case STATIC:
+			distanceTravelled += 0;
+		case WALKING:
+			distanceTravelled += (stepCount-prevStepCount) * 1; // FIX
+		case RUNNING:
+			distanceTravelled += (stepCount-prevStepCount) * 3; // FIX
+	}
+}
 
 int ADC_to_mV(u_int32_t ADC_val) {
 	// Converts value to mV
