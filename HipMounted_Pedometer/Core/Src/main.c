@@ -48,7 +48,10 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 int isADCFinished = 0;
 u_int32_t ADC_VAL[3]; // Store raw X, Y and Z values in a array
-
+float adjVal[2][3] = { // Stores the adjustment value for +-x, +-y, +-z,
+		{1, 1, 1},
+		{1, 1, 1}
+};
 const float zero_gVal = 1351.68; // ADC value at 0g
 const float ADC_per_gVal = 450.56; // The ADC value between a difference in 1 g
 volatile int x;
@@ -136,9 +139,9 @@ void walkingPace(void) {
 
 void ST_protocol(void) {
 	// Expected g change for X,Y and Z (FIX - different expected values at 3.3V)
-	const float expected_X = -325;
-	const float expected_Y = 325;
-	const float expected_Z = 550;
+	const float expected_X = -442.5;
+	const float expected_Y = 442.5;
+	const float expected_Z = 750;
 
 	// Convert the current X, Y, Z values to mV
 	get_ADC_Values();
@@ -171,11 +174,20 @@ void ST_protocol(void) {
 }
 
 void calibration(void) {
-	HAL_Delay(200);
+	HAL_Delay(500);
 	int size = sizeof(ADC_VAL)/sizeof(ADC_VAL[0]);
+	float modVal;
 	for (int i=0; i<size; i++) {
-		float modVal = ADC_to_g(ADC_VAL[i]);
+		modVal = ADC_to_g(ADC_VAL[i]);
+		adjVal[0][i] = modVal;
+
+		modVal = -ADC_to_g(ADC_VAL[i]);
+		adjVal[1][i] = modVal;
 	}
+
+	// Display Calibration finished
+	HAL_Delay(1000);
+	// Display back to normal information
 }
 
 void distanceTravelled(void) {
