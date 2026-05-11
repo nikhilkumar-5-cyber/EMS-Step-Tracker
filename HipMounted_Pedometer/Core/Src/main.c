@@ -119,13 +119,6 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 	z = ADC_to_g(ADC_VAL[2]);
 }
 
-void stepTracking(void) {
-	// Insert Step tracking logic
-
-	prevStepCount = stepCount;
-	stepCount += 0; // FIX - New step count
-	stepCountTimeDiff = HAL_GetTick() - stepCountTimeDiff;
-}
 
 void walkingPace(void) {
 	const int walkingFreqMax = 0; // FIX
@@ -249,7 +242,7 @@ u_int32_t get_ADC_Values(void) {
 	isADCFinshed = 0;
 }
 
-void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc) {
+void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc) {
 	isADCFinished = 1;
 }
 
@@ -304,7 +297,7 @@ int main(void)
 		  ST_protocol(); // Checks if the ST button is pressed and then checks if ADXL is working properly
 	  }
 
-	  if () {// Calibrates direction when button is pressed
+	  if (/* condition */) {// Calibrates direction when button is pressed
 		  calibration();
 	  }
 
