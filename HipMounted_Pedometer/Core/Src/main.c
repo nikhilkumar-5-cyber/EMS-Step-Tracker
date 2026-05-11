@@ -52,8 +52,15 @@ float adjVal[2][3] = { // Stores the adjustment value for +-x, +-y, +-z,
 		{1, 1, 1},
 		{1, 1, 1}
 };
-const float zero_gVal = 1351.68; // ADC value at 0g
-const float ADC_per_gVal = 450.56; // The ADC value between a difference in 1 g
+
+const float STM_res = 4095; // STM resolution
+const float refV = 3.3; //[V]
+const float sensitivity = 0.33; // [V/g]
+// ADC value at 0g [half of 3.3 * max ADC value]
+const float zero_gBias = (refV/2)*STM_res;
+// The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
+const float ADC_per_gVal = (sensitivity/refV)*(STM_res);
+
 volatile int x;
 volatile int y;
 volatile int z;
@@ -69,7 +76,7 @@ typedef enum {
 	RUNNING
 } WalkingPace;
 
-WalkingPace walkingPace = STATIC;
+WalkingPace pace = STATIC;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -95,8 +102,18 @@ static void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void getValues(void) {
+void getValues(void) { // Gets the ADC values and converts them to g values and adjusts them based on calibrated values
 	get_ADC_Values();
+	// Adjusts values based on calibrated values
+	for (int i=0; i<3; i++) {
+		// Checks if the g-val
+		if (ADC_to_g(ADC_VAL[i])< 0) {
+			ADC_VAL[i] = ADC_VAL[i]*adjVal[1][i];
+		}
+		else {
+			ADC_VAL[i] = ADC_VAL[i]*adjVal[1][i];
+		}
+	}
 	x = ADC_to_g(ADC_VAL[0]);
 	y = ADC_to_g(ADC_VAL[1]);
 	z = ADC_to_g(ADC_VAL[2]);
@@ -114,21 +131,21 @@ void walkingPace(void) {
 	const int walkingFreqMax = 0; // FIX
 	volatile int stepFrequency = (stepCount-prevStepCount)/stepCountTimeDiff;
 	if (stepFrequency == 0) { // Checks if there hasn't been movement
-		walkingPace = STATIC;
+		pace = STATIC;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_SET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else if (stepFrequency < walkingFreqMax) { // Checks if Pace is walking
-		walkingPace = WALKING;
+		pace = WALKING;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_SET); // Orange LED (walking)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else { // Pace is running
-		walkingPace = RUNNING;
+		pace = RUNNING;
 		// Display Walking Pace as "Static/Stationary"
 		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
 		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
@@ -138,20 +155,20 @@ void walkingPace(void) {
 }
 
 void ST_protocol(void) {
-	// Expected g change for X,Y and Z (FIX - different expected values at 3.3V)
-	const float expected_X = -442.5;
-	const float expected_Y = 442.5;
-	const float expected_Z = 750;
+	// Expected g change for X,Y and Z
+	const float expected_X = (-0.4425/sensitivity); // -442.5 mV
+	const float expected_Y = (0.4425/sensitivity); //  442.5 mV
+	const float expected_Z = (0.75/sensitivity); // 750 mV
 
 	// Convert the current X, Y, Z values to mV
-	get_ADC_Values();
+	getValues();
 	volatile float old_x = x;
 	volatile float old_y = y;
 	volatile float old_z = z;
 	// Activate ADXL ST Pin
 	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_SET);
 	// get the new X,Y and Z values and convert them to mV
-	get_ADC_Values();
+	getValues();
 	volatile float new_x = x;
 	volatile float new_y = y;
 	volatile float new_z = z;
@@ -175,7 +192,7 @@ void ST_protocol(void) {
 
 void calibration(void) {
 	HAL_Delay(500);
-	int size = sizeof(ADC_VAL)/sizeof(ADC_VAL[0]);
+	int size = 3;
 	float modVal;
 	for (int i=0; i<size; i++) {
 		modVal = ADC_to_g(ADC_VAL[i]);
@@ -191,7 +208,7 @@ void calibration(void) {
 }
 
 void distanceTravelled(void) {
-	switch (walkingPace) {
+	switch (pace) {
 		case STATIC:
 			distanceTravelled += 0;
 		case WALKING:
@@ -201,15 +218,15 @@ void distanceTravelled(void) {
 	}
 }
 
-int ADC_to_mV(u_int32_t ADC_val) {
+int ADC_to_V(u_int32_t ADC_val) {
 	// Converts value to mV
-	int converted_val = ADC_val*(5/4095); // FIX conversion
+	int converted_val = ADC_val*(refV/STM_res);
 	return converted_val;
 }
 
 float ADC_to_g(u_int32_t ADC_val) {
 	// Converts ADC value to g
-	float gVal = (ADC_val-zero_gVal)/ADC_per_gVal;
+	float gVal = (ADC_to_V(ADC_val)-zero_gBias)/sensitivity;
 	return gVal;
 }
 
@@ -217,10 +234,10 @@ int g_to_ADC(float g_val) {
 	// Converts g value to ADC
 	int ADCval;
 	if (g_val > 0) {
-		ADCval = zero_gVal + (ADC_per_gVal*g_val);
+		ADCval = zero_gBias + (ADC_per_gVal*g_val);
 	}
 	if (g_val < 0) {
-		ADCval = zero_gVal - (ADC_per_gVal*g_val);
+		ADCval = zero_gBias - (ADC_per_gVal*g_val);
 	}
 	return ADCval;
 }
