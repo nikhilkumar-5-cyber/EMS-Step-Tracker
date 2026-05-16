@@ -19,15 +19,12 @@ typedef struct {
 	uint32_t END;
 	uint32_t TIME;
 } Timing;
-extern float step_TIME;
-extern float step_BEGIN;
-extern float step_STOP;
 extern uint8_t vector_state;
 extern Timing STEP;
-extern MPU6050_Accelerometer START_VECTOR;
-extern MPU6050_Accelerometer PEAK_VECTOR;
-extern MPU6050_Accelerometer STOP_VECTOR;
-extern MPU6050_Accelerometer PEAK_SERIES[PEAK_SERIES_SIZE];
+extern ADXL335 START_VECTOR;
+extern ADXL335 PEAK_VECTOR;
+extern ADXL335 STOP_VECTOR;
+extern ADXL335 PEAK_SERIES[PEAK_SERIES_SIZE];
 extern uint16_t TOTAL_STEPS;
 
 

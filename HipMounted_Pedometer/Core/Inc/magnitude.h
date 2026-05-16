@@ -3,20 +3,15 @@
 #define INC_MAGNITUDE_H_
 
 /* Includes */
+#include <stdint.h>
+#include "main.h"
 
 /* Defines */
 #define NUM_SAMPLES 80
+#define NUM_MAGS 4
 /* Externs */
-typedef struct {
-	double X;
-	double Y;
-	double Z;
-	double Magnitude;
-} MPU6050_Accelerometer;
-
-extern MPU6050_Accelerometer IIR[NUM_SAMPLES];
-extern MPU6050_Accelerometer Sampling[NUM_SAMPLES];
-extern MPU6050_Accelerometer MagSamples[4];
+extern ADXL335 Sampling[NUM_SAMPLES];
+extern ADXL335 MagSamples[NUM_MAGS];
 extern uint8_t sample_count;
 
 /* Function Declarations */

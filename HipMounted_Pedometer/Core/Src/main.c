@@ -47,7 +47,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 int isADCFinished = 0;
-u_int32_t ADC_VAL[3]; // Store raw X, Y and Z values in a array
+uint32_t ADC_VAL[3]; // Store raw X, Y and Z values in a array
 float adjVal[2][3] = { // Stores the adjustment value for +-x, +-y, +-z,
 		{1, 1, 1},
 		{1, 1, 1}
@@ -61,9 +61,8 @@ const float zero_gBias = (refV/2)*STM_res;
 // The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
 const float ADC_per_gVal = (sensitivity/refV)*(STM_res);
 
-volatile int x;
-volatile int y;
-volatile int z;
+volatile ADXL335 RAW_SAMPLE;
+volatile ADXL335 CALIB_SAMPLE;
 
 volatile int stepCount = 0; // Stores the count of steps
 volatile int prevStepCount; // Stores the previous step count
@@ -92,10 +91,10 @@ static void walkingPace(void);
 static void ST_protocol(void);
 static void calibration(void);
 static void distanceTravelled(void);
-static int ADC_to_mV(u_int32_t ADC_val);
-static float ADC_to_g(u_int32_t ADC_val);
+static int ADC_to_mV(uint32_t ADC_val);
+static float ADC_to_g(uint32_t ADC_val);
 static int g_to_ADC(float g_val);
-static u_int32_t get_ADC_Values(void);
+static uint32_t get_ADC_Values(void);
 static void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc);
 /* USER CODE END PFP */
 
@@ -114,9 +113,9 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 			ADC_VAL[i] = ADC_VAL[i]*adjVal[1][i];
 		}
 	}
-	x = ADC_to_g(ADC_VAL[0]);
-	y = ADC_to_g(ADC_VAL[1]);
-	z = ADC_to_g(ADC_VAL[2]);
+	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
+	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
+	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
 }
 
 
@@ -149,33 +148,33 @@ void walkingPace(void) {
 
 void ST_protocol(void) {
 	// Expected g change for X,Y and Z
-	const float expected_X = (-0.4425/sensitivity); // -442.5 mV
-	const float expected_Y = (0.4425/sensitivity); //  442.5 mV
-	const float expected_Z = (0.75/sensitivity); // 750 mV
+	const float X_FACTORY_CHG = (-0.4425/sensitivity); // -442.5 mV
+	const float Y_FACTORY_CHG = (0.4425/sensitivity); //  442.5 mV
+	const float Z_FACTORY_CHG = (0.75/sensitivity); // 750 mV
 
 	// Convert the current X, Y, Z values to mV
 	getValues();
-	volatile float old_x = x;
-	volatile float old_y = y;
-	volatile float old_z = z;
+	volatile float X_PRE_ST = RAW_SAMPLE.X;
+	volatile float Y_PRE_ST = RAW_SAMPLE.Y;
+	volatile float Z_PRE_ST = RAW_SAMPLE.Z;
 	// Activate ADXL ST Pin
 	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_SET);
 	// get the new X,Y and Z values and convert them to mV
 	getValues();
-	volatile float new_x = x;
-	volatile float new_y = y;
-	volatile float new_z = z;
+	volatile float X_POST_ST = RAW_SAMPLE.X;
+	volatile float Y_POST_ST = RAW_SAMPLE.Y;
+	volatile float Z_POST_ST = RAW_SAMPLE.Z;
 	// Disable ADXL ST Pin
 	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_RESET);
 
 	// Calculate the difference between old and new values
-	volatile float x_diff = new_x - old_x;
-	volatile float y_diff = new_y - old_y;
-	volatile float z_diff = new_z - old_z;
+	volatile float X_DELTA = X_POST_ST - X_PRE_ST;
+	volatile float Y_DELTA = Y_POST_ST - Y_PRE_ST;
+	volatile float Z_DELTA = Z_POST_ST - Z_PRE_ST;
 
-	if ((x_diff >= expected_X+(0.1*expected_X) && x_diff <= expected_X-(0.1*expected_X)) &&
-		(y_diff >= expected_Y+(0.1*expected_Y) && y_diff <= expected_Y-(0.1*expected_Y)) &&
-		(z_diff >= expected_Z+(0.1*expected_Z) && z_diff <= expected_Z-(0.1*expected_Z))) {
+	if ((X_DELTA >= X_FACTORY_CHG+(0.1*X_FACTORY_CHG) && X_DELTA <= X_FACTORY_CHG-(0.1*X_FACTORY_CHG)) &&
+		(Y_DELTA >= Y_FACTORY_CHG+(0.1*Y_FACTORY_CHG) && Y_DELTA <= Y_FACTORY_CHG-(0.1*Y_FACTORY_CHG)) &&
+		(Z_DELTA >= Z_FACTORY_CHG+(0.1*Z_FACTORY_CHG) && Z_DELTA <= Z_FACTORY_CHG-(0.1*Z_FACTORY_CHG))) {
 		// Display "Working" on OLED (FIX)
 	}
 	else {
@@ -223,9 +222,9 @@ float ADC_to_g(u_int32_t ADC_val) {
 	return gVal;
 }
 
-int g_to_ADC(float g_val) {
+float g_to_ADC(float g_val) {
 	// Converts g value to ADC
-	int ADCval;
+	float ADCval;
 	if (g_val > 0) {
 		ADCval = zero_gBias + (ADC_per_gVal*g_val);
 	}
@@ -235,7 +234,7 @@ int g_to_ADC(float g_val) {
 	return ADCval;
 }
 
-u_int32_t get_ADC_Values(void) {
+uint32_t get_ADC_Values(void) {
 	// Function reads the ADC values of X, Y and Z and puts it in the ADC_VAL array
 	HAL_ADC_Start_DMA(&hadc1, ADC_VAL, 3);
 	while (isADCFinished != 1) {}

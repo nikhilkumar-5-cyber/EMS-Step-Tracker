@@ -11,10 +11,10 @@
 
 uint8_t VECTOR_STATE = 0; //EXTERN
 Timing STEP;
-MPU6050_Accelerometer START_VECTOR;
-MPU6050_Accelerometer PEAK_VECTOR;
-MPU6050_Accelerometer STOP_VECTOR;
-MPU6050_Accelerometer PEAK_SERIES[PEAK_SERIES_SIZE];
+ADXL335 START_VECTOR;
+ADXL335 PEAK_VECTOR;
+ADXL335 STOP_VECTOR;
+ADXL335 PEAK_SERIES[PEAK_SERIES_SIZE];
 uint16_t TOTAL_STEPS = 0;
 /* INTERRUPT (Sample Acceleration >> Receive Magnitude) */
 
@@ -45,14 +45,14 @@ void vector_tracking() {
 		case (2):
 			/* Retains value across function calls */
 			static uint8_t peak_count;
-			static MPU6050_Accelerometer MAX_PEAK;
+			static ADXL335 MAX_PEAK;
 			/* Store up to ~200 (2 seconds) */
 			PEAK_SERIES[peak_count] = IIR[sample_count-1];
 
 			if (IIR[sample_count-1].Magnitude < PEAK_THRESHOLD) {
 				/* Iterate & Return Max Value */
 				for (int i = 0; i <= peak_count; i++) {
-					MPU6050_Accelerometer MAX_SAMPLE = PEAK_SERIES[i];
+					ADXL335 MAX_SAMPLE = PEAK_SERIES[i];
 					if (MAX_SAMPLE.Magnitude > MAX_PEAK.Magnitude) {
 						MAX_PEAK = PEAK_SERIES[i];
 					}

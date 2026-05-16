@@ -8,8 +8,8 @@
 #include "magnitude.h"
 
 /* Global Variables */
-MPU6050_Accelerometer Sampling[NUM_SAMPLES];
-MPU6050_Accelerometer MagSamples[4];
+ADXL335 Sampling[NUM_SAMPLES];
+ADXL335 MagSamples[NUM_MAGS];
 uint8_t sample_count = 1;
 
 /* INTERRUPT (Sample Acceleration) */

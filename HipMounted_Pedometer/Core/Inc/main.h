@@ -31,12 +31,20 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-//#include "step_counting.h"
+#include "step_counting.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+typedef struct {
+	double X;
+	double Y;
+	double Z;
+	double Magnitude;
+} ADXL335;
 
+extern volatile ADXL335 RAW_SAMPLE;
+extern volatile ADXL335 CALIB_SAMPLE;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
