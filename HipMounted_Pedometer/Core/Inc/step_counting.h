@@ -9,6 +9,7 @@
 #define INC_STEP_COUNTING_H_
 
 #include <time.h>
+#include "main.h"
 #include "magnitude.h"
 /* Defines */
 #define PEAK_THRESHOLD 0.6
@@ -21,10 +22,10 @@ typedef struct {
 } Timing;
 extern uint8_t vector_state;
 extern Timing STEP;
-extern ADXL335 START_VECTOR;
-extern ADXL335 PEAK_VECTOR;
-extern ADXL335 STOP_VECTOR;
-extern ADXL335 PEAK_SERIES[PEAK_SERIES_SIZE];
+//extern ADXL335 START_VECTOR;
+//extern ADXL335 PEAK_VECTOR;
+//extern ADXL335 STOP_VECTOR;
+//extern ADXL335 PEAK_SERIES[PEAK_SERIES_SIZE];
 extern uint16_t TOTAL_STEPS;
 
 

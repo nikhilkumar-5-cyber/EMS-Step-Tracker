@@ -8,6 +8,7 @@
 #include "magnitude.h"
 
 /* Global Variables */
+ADXL335 IIR[NUM_SAMPLES];
 ADXL335 Sampling[NUM_SAMPLES];
 ADXL335 MagSamples[NUM_MAGS];
 uint8_t sample_count = 1;

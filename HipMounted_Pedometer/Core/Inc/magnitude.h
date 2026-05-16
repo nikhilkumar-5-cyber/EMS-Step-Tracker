@@ -10,6 +10,7 @@
 #define NUM_SAMPLES 80
 #define NUM_MAGS 4
 /* Externs */
+extern ADXL335 IIR[NUM_SAMPLES];
 extern ADXL335 Sampling[NUM_SAMPLES];
 extern ADXL335 MagSamples[NUM_MAGS];
 extern uint8_t sample_count;
