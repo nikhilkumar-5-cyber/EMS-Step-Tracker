@@ -23,13 +23,13 @@ void conditions_INIT() {
 	Sampling[0].Magnitude = 0;
 }
 
-void HPF_magnitiude_IT() {
+void HPF_magnitiude_IT() { //Dynamically computes magnitude for every sample; circular buffer of NUM_SAMPLES
 
 	if (sample_count <= NUM_SAMPLES-1) {
 		/* Store sample[i] */
-		Sampling[sample_count].X;// = Acceleration.X;
-		Sampling[sample_count].Y;// = Acceleration.Y;
-		Sampling[sample_count].Z;// = Acceleration.Z;
+		Sampling[sample_count].X = CALIB_SAMPLE.X;
+		Sampling[sample_count].Y = CALIB_SAMPLE.Y;
+		Sampling[sample_count].Z = CALIB_SAMPLE.Z;
 		/* Magnitude calculation */
 		Sampling[sample_count].Magnitude = (pow(Sampling[sample_count].X, 2) + pow(Sampling[sample_count].Y, 2) + pow(Sampling[sample_count].Z, 2));
 		Sampling[sample_count].Magnitude = sqrt(Sampling[sample_count].Magnitude);

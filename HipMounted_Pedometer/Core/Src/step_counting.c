@@ -28,7 +28,7 @@ void vector_tracking() {
 			if ((MagSamples[0].Magnitude > MagSamples[1].Magnitude)
 				&& (MagSamples[1].Magnitude > MagSamples[2].Magnitude)
 				&& (MagSamples[2].Magnitude > MagSamples[3].Magnitude)) {
-				/* */
+				/*  */
 				START_VECTOR = MagSamples[3];
 				STEP.BEGIN = HAL_GetTick();
 				VECTOR_STATE++;
