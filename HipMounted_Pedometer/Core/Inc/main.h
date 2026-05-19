@@ -38,9 +38,10 @@ extern "C" {
 #define NUM_SAMPLES 40 //Stores ~2x steps @20Hz
 
 typedef struct {
-	uint32_t BEGIN;
-	uint32_t END;
-	uint32_t TIME;
+	uint32_t begin;
+	uint32_t peak_start;
+	uint32_t end;
+	uint32_t time;
 } STEP_CLOCK_t;
 
 
