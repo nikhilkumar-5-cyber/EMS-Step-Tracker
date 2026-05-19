@@ -24,7 +24,7 @@ void update_lastSamples(ADXL335_t *dest) {
 
 }
 
-void gait_cycle() {
+void gait_cycle() { //NOTE: call for every NEW sample
 
 	switch (vectorState) {
 
@@ -76,7 +76,6 @@ void gait_cycle() {
 			timeCard.time = timeCard.end - timeCard.begin;
 			stepCount++;
 		}
-
 
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */
 	}
