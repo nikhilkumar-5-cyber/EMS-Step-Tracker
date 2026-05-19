@@ -96,8 +96,8 @@ void Error_Handler(void);
 #define LED_GREEN_GPIO_Port GPIOB
 #define ST_PIN_CONTROL_Pin GPIO_PIN_1
 #define ST_PIN_CONTROL_GPIO_Port GPIOB
-#define Button_IN_ST_Pin GPIO_PIN_14
-#define Button_IN_ST_GPIO_Port GPIOB
+#define Button_IN_CALI_Pin GPIO_PIN_14
+#define Button_IN_CALI_GPIO_Port GPIOB
 #define LED_ORANGE_Pin GPIO_PIN_9
 #define LED_ORANGE_GPIO_Port GPIOA
 #define LED_YELLOW_Pin GPIO_PIN_7
