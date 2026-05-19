@@ -46,9 +46,9 @@ typedef struct {
 
 
 typedef struct {
-	double x;
-	double y;
-	double z;
+	double X;
+	double Y;
+	double Z;
 	double magnitude;
 } ADXL335_t;
 

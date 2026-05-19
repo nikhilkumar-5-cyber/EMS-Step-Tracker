@@ -90,16 +90,14 @@ static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 static void getValues(void);
-static void stepTracking(void);
 static void walkingPace(void);
 static void ST_protocol(void);
 static void calibration(void);
-static void distanceTravelled(void);
-static int ADC_to_mV(uint32_t ADC_val);
+static int ADC_to_V(uint32_t ADC_val);
 static float ADC_to_g(uint32_t ADC_val);
 static int g_to_ADC(float g_val);
 static uint32_t get_ADC_Values(void);
-static void HAL_ADC_ConvoCpltCallback(ADC_HandlerTypeDef *hadc);
+static void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -129,23 +127,23 @@ void walkingPace(void) {
 	if (stepFrequency == 0) { // Checks if there hasn't been movement
 		pace = STATIC;
 		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_SET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET); // Yellow LED (stationary)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // Orange LED (walking)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else if (stepFrequency < walkingFreqMax) { // Checks if Pace is walking
 		pace = WALKING;
 		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_SET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_RESET); // RED LED (running)
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // Yellow LED (stationary)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); // Orange LED (walking)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); // RED LED (running)
 	}
 	else { // Pace is running
 		pace = RUNNING;
 		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_Pin_7, GPIO_PIN_RESET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_9, GPIO_PIN_RESET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_Pin_7, GPIO_PIN_SET); // RED LED (running)
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // Yellow LED (stationary)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // Orange LED (walking)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET); // RED LED (running)
 
 	}
 }
@@ -162,14 +160,14 @@ void ST_protocol(void) {
 	volatile float Y_PRE_ST = RAW_SAMPLE.Y;
 	volatile float Z_PRE_ST = RAW_SAMPLE.Z;
 	// Activate ADXL ST Pin
-	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 	// get the new X,Y and Z values and convert them to mV
 	getValues();
 	volatile float X_POST_ST = RAW_SAMPLE.X;
 	volatile float Y_POST_ST = RAW_SAMPLE.Y;
 	volatile float Z_POST_ST = RAW_SAMPLE.Z;
 	// Disable ADXL ST Pin
-	HAL_GPIO_WritePin(GPIOB, GPIO_Pin_1, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
 
 	// Calculate the difference between old and new values
 	volatile float X_DELTA = X_POST_ST - X_PRE_ST;
@@ -203,30 +201,19 @@ void calibration(void) {
 	// Display back to normal information
 }
 
-void distanceTravelled(void) {
-	switch (pace) {
-		case STATIC:
-			distanceTravelled += 0;
-		case WALKING:
-			distanceTravelled += (stepCount-prevStepCount) * 1; // FIX
-		case RUNNING:
-			distanceTravelled += (stepCount-prevStepCount) * 3; // FIX
-	}
-}
-
-int ADC_to_V(u_int32_t ADC_val) {
+int ADC_to_V(uint32_t ADC_val) {
 	// Converts value to mV
 	int converted_val = ADC_val*(refV/STM_res);
 	return converted_val;
 }
 
-float ADC_to_g(u_int32_t ADC_val) {
+float ADC_to_g(uint32_t ADC_val) {
 	// Converts ADC value to g
 	float gVal = (ADC_to_V(ADC_val)-zero_gBias)/sensitivity;
 	return gVal;
 }
 
-float g_to_ADC(float g_val) {
+int g_to_ADC(float g_val) {
 	// Converts g value to ADC
 	float ADCval;
 	if (g_val > 0) {
@@ -242,7 +229,7 @@ uint32_t get_ADC_Values(void) {
 	// Function reads the ADC values of X, Y and Z and puts it in the ADC_VAL array
 	HAL_ADC_Start_DMA(&hadc1, ADC_VAL, 3);
 	while (isADCFinished != 1) {}
-	isADCFinshed = 0;
+	isADCFinished = 0;
 }
 
 void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc) {
@@ -293,15 +280,12 @@ int main(void)
   while (1)
   {
 	  getValues(); // Gets the x,y and z values
-	  stepTracking(); // Count steps
+	   // Count steps
 	  walkingPace(); // Determines Walking pace
 
+	  ST_protocol(); // Checks if the ST button is pressed and then checks if ADXL is working properly
 
-	  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {// Check if the ST button is pressed
-		  ST_protocol(); // Checks if the ST button is pressed and then checks if ADXL is working properly
-	  }
-
-	  if (/* condition */) {// Calibrates direction when button is pressed
+	  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {// Calibrates direction when button is pressed
 		  calibration();
 	  }
 
@@ -309,7 +293,7 @@ int main(void)
 	  		stepCount = 0;
 	  }
 
-	  distanceTravelled(); // Calculates the distance travelled
+	   // Calculates the distance travelled
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

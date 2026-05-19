@@ -5,6 +5,7 @@
 /* Includes */
 #include <stdint.h>
 #include "main.h"
+#include "math.h"
 
 /* Defines */
 

@@ -14,7 +14,7 @@
 void compute_Magnitude(ADXL335_t *sample) {
 
 	//Square & sumXYZ
-	double magSquared = pow(sample->x, 2) + pow(sample->y, 2) + pow(sample->z, 2) ;
+	double magSquared = pow(sample->X, 2) + pow(sample->Y, 2) + pow(sample->Z, 2) ;
 
 	//sqrt()
 	sample->magnitude = sqrt(magSquared);
