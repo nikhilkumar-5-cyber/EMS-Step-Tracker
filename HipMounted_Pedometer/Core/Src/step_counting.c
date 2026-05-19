@@ -5,10 +5,7 @@
  *      Author: noah
  */
 
-#include "magnitude.h"
 #include "step_counting.h"
-#include <stdbool.h>
-#include "stm32g0xx_hal.h" //Included in main.h
 
 /* Global Variables */
 
@@ -48,7 +45,7 @@ void gait_cycle() {
 		//Progress to MOVING
 			vectorState = 1;
 			startVector = lastSamples[0];
-			timeCard.begin = HAL_GetTick();
+			timeCard.begin = HAL_GetTick(); //Mark start time
 		}
 
 		break; /* CHANGE STATE: Increasing acceleration (1,2,3...)) >> (1) */
@@ -58,11 +55,12 @@ void gait_cycle() {
 
 		update_lastSamples(lastSamples); //Update local processing buffer
 
-		if (HAL_GetTick() - timeCard.begin > MAX_MOVING_TIME) {
+		if (HAL_GetTick() - timeCard.begin >= MAX_MOVING_TIME) {
 			vectorState = 0; //Return to IDLE
 		}
 		else if (lastSamples[0].magnitude > PEAK_THRESHOLD && lastSamples[1].magnitude > PEAK_THRESHOLD) { //2x Samples > Threshold
 			vectorState = 2; //Progress to STEPPING
+			timeCard.peak_start = HAL_GetTick();
 		}
 
 		break; /* CHANGE STATE: Timeout >> (0); OR Break threshold >> (2) */
@@ -72,6 +70,12 @@ void gait_cycle() {
 
 		update_lastSamples(lastSamples); //Update local processing buffer
 
+		if (timeCard.peak_start >= MIN_PEAK_TIME && lastSamples[0].magnitude <= PEAK_THRESHOLD && lastSamples[1].magnitude <= PEAK_THRESHOLD){
+			vectorState = 0;
+			timeCard.end = HAL_GetTick();
+			timeCard.time = timeCard.end - timeCard.begin;
+			stepCount++;
+		}
 
 
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */

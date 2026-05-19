@@ -65,7 +65,7 @@ volatile ADXL335_t RAW_SAMPLE = {0};
 volatile ADXL335_t CALIB_SAMPLE = {0};
 volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
-volatile int stepCount = 0; // Stores the count of steps
+volatile uint32_t stepCount = 0; // Stores the count of steps
 volatile int prevStepCount; // Stores the previous step count
 volatile int stepCountTimeDiff; // Difference in time when new step count is calculated
 volatile float distanceTravelled = 0; // Distance travelled [m]

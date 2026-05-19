@@ -56,6 +56,8 @@ extern volatile ADXL335_t RAW_SAMPLE;
 extern volatile ADXL335_t CALIB_SAMPLE;
 extern volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
+extern volatile uint32_t stepCount;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
