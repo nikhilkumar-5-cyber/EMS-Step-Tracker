@@ -61,8 +61,9 @@ const float zero_gBias = (refV/2)*STM_res;
 // The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
 const float ADC_per_gVal = (sensitivity/refV)*(STM_res);
 
-volatile ADXL335 RAW_SAMPLE;
-volatile ADXL335 CALIB_SAMPLE;
+volatile ADXL335 RAW_SAMPLE = {0};
+volatile ADXL335 CALIB_SAMPLE = {0};
+volatile ADXL335 SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
 volatile int stepCount = 0; // Stores the count of steps
 volatile int prevStepCount; // Stores the previous step count

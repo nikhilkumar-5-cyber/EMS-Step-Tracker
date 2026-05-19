@@ -8,25 +8,30 @@
 #ifndef INC_STEP_COUNTING_H_
 #define INC_STEP_COUNTING_H_
 
-#include <time.h>
 #include "main.h"
 #include "magnitude.h"
+#include <time.h>
+
 /* Defines */
-#define PEAK_THRESHOLD 0.6
-#define PEAK_SERIES_SIZE 200
+#define PEAK_THRESHOLD 0.6 //acceleration [m/s^2]
+#define PEAK_SERIES_SIZE 20 //~1x step-size MAX
+//#define MAX_WAITING_TIME
+//#define MAX_STEP_TIME
+#define MAG_SAMPLES 3 //Recent (3) samples
+
+
 /* Externs */
 typedef struct {
 	uint32_t BEGIN;
 	uint32_t END;
 	uint32_t TIME;
-} Timing;
-extern uint8_t vector_state;
-extern Timing STEP;
-extern ADXL335 START_VECTOR;
-extern ADXL335 PEAK_VECTOR;
-extern ADXL335 STOP_VECTOR;
-extern ADXL335 PEAK_SERIES[PEAK_SERIES_SIZE];
-extern uint16_t TOTAL_STEPS;
+} STEP_CLOCK;
 
+extern uint8_t VECTOR_STATE;
+
+/* Function prototypes */
+ADXL335 new_Magnitudes(); //Retrieve last (MAG_SAMPLES) from sampling_Buffer; Copy and compute magnitudes.
+
+void vector_tracking(); //Control step-tracking states
 
 #endif /* INC_STEP_COUNTING_H_ */

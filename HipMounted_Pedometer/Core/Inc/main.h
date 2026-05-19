@@ -31,20 +31,23 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "step_counting.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+#define NUM_SAMPLES 40 //Stores ~2x steps @20Hz
+
 typedef struct {
-	double X;
-	double Y;
-	double Z;
-	double Magnitude;
+	double x;
+	double y;
+	double z;
+	double magnitude;
 } ADXL335;
 
 extern volatile ADXL335 RAW_SAMPLE;
 extern volatile ADXL335 CALIB_SAMPLE;
+extern volatile ADXL335 SAMPLE_BUFFER[NUM_SAMPLES];
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
