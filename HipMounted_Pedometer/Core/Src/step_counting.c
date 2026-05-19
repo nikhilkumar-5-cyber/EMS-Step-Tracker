@@ -7,44 +7,41 @@
 
 #include "magnitude.h"
 #include "step_counting.h"
+#include <stdbool.h>
+#include "stm32g0xx_hal.h" //Included in main.h
 
 /* Global Variables */
 
-uint8_t VECTOR_STATE = 0; //EXTERN
-uint8_t magnitudeIndex = 0;
-
+uint8_t vectorState = 0; //EXTERN
+STEP_CLOCK_t timeCard = {0};
+ADXL335_t startVector = {0};
 
 /* INTERRUPT (Sample Acceleration >> Receive Magnitude) */
 
-
-ADXL335 new_magnitudes() {
-
-	ADXL335 newMagnitudes[MAG_SAMPLES] = {0};
-
-	//Check whether (MAG_SAMPLES)# of values have already been read
-	for (uint8_t i = 0; i < MAG_SAMPLES; i++) {
-
-		newMagnitudes[i] = (ADXL335){ //Equate most recent (MAG_SAMPLES) from SAMPLE_BUFFER (LIFO)
-				.x = SAMPLE_BUFFER[i].x,
-				.y = SAMPLE_BUFFER[i].y,
-				.z = SAMPLE_BUFFER[i].z,
-
-		};
-		compute_Magnitude(&newMagnitudes[i]); //Store associated magnitude
-	}
-	return newMagnitudes; //COPY for processing/conditions
-}
-
 void gait_cycle() {
 
-	switch (VECTOR_STATE) {
+	switch (vectorState) {
 
 	case (0): //IDLE
 
-		//if (MAG_SAMPLES) successive increases
-				//VECTOR_STATE = 1; STEP_CLOCK.BEGIN;
+		ADXL335_t lastSamples[ISO_SAMPLES] = {0}; //Local processing buffer
+		uint8_t decreasing = 1; //0th > 1st > 2nd...
 
-		break; //Transition: Increasing acceleration (1,2,3...)
+		for (uint8_t i = 0; i < ISO_SAMPLES-1; i++) {
+			//Check for (ISO_SAMPLES)# of successive increases
+			if (lastSamples[i].magnitude <= lastSamples[i+1].magnitude) {
+				decreasing = 0;
+				break;
+			}
+		}
+
+		if (decreasing) {
+		//Progress to MOVING
+			vectorState = 1;
+			startVector = lastSamples[0];
+			timeCard.BEGIN = HAL_GetTick();
+		}
+		break; //Transition: Increasing acceleration (1,2,3...))
 
 	case (1): //MOVING
 

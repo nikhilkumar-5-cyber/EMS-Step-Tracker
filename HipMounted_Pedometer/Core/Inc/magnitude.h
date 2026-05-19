@@ -11,6 +11,6 @@
 /* Externs */
 
 /* Function Declarations */
-void compute_Magnitude(ADXL335 *sample); //Dynamically computes magnitude for every sample; circular buffer of NUM_SAMPLES
+void compute_Magnitude(ADXL335_t *sample); //Dynamically computes magnitude for every sample; circular buffer of NUM_SAMPLES
 
 #endif /* INC_MAGNITUDE_H_ */

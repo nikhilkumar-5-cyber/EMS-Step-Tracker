@@ -17,20 +17,14 @@
 #define PEAK_SERIES_SIZE 20 //~1x step-size MAX
 //#define MAX_WAITING_TIME
 //#define MAX_STEP_TIME
-#define MAG_SAMPLES 3 //Recent (3) samples
+#define ISO_SAMPLES 3 //Recent (3) samples
 
 
 /* Externs */
-typedef struct {
-	uint32_t BEGIN;
-	uint32_t END;
-	uint32_t TIME;
-} STEP_CLOCK;
 
 extern uint8_t VECTOR_STATE;
 
 /* Function prototypes */
-ADXL335 new_magnitudes(); //Get magnitude of last (MAG_SAMPLES) in SAMPLE_BUFFER in a copy;
 
 void gait_cycle(); //Control step-tracking states
 

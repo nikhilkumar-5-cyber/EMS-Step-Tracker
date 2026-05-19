@@ -38,15 +38,22 @@ extern "C" {
 #define NUM_SAMPLES 40 //Stores ~2x steps @20Hz
 
 typedef struct {
+	uint32_t BEGIN;
+	uint32_t END;
+	uint32_t TIME;
+} STEP_CLOCK_t;
+
+
+typedef struct {
 	double x;
 	double y;
 	double z;
 	double magnitude;
-} ADXL335;
+} ADXL335_t;
 
-extern volatile ADXL335 RAW_SAMPLE;
-extern volatile ADXL335 CALIB_SAMPLE;
-extern volatile ADXL335 SAMPLE_BUFFER[NUM_SAMPLES];
+extern volatile ADXL335_t RAW_SAMPLE;
+extern volatile ADXL335_t CALIB_SAMPLE;
+extern volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
 /* USER CODE END ET */
 
