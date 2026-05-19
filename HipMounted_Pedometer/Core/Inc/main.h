@@ -31,6 +31,8 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "self_test.h"
+#include "calibration.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -58,6 +60,10 @@ extern volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
 extern volatile uint32_t stepCount;
 
+extern const float sensitivity;
+extern uint32_t ADC_VAL[3];
+extern float adjVal[2][3];
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -74,7 +80,8 @@ extern volatile uint32_t stepCount;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void get_ADC_Values(void);
+float ADC_to_g(uint32_t ADC_val);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
