@@ -17,27 +17,52 @@ uint8_t magnitudeIndex = 0;
 /* INTERRUPT (Sample Acceleration >> Receive Magnitude) */
 
 
-ADXL335 new_Magnitudes() {
+ADXL335 new_magnitudes() {
 
-	ADXL335 new_Magnitudes[MAG_SAMPLES] = {0};
+	ADXL335 newMagnitudes[MAG_SAMPLES] = {0};
 
 	//Check whether (MAG_SAMPLES)# of values have already been read
-	if (magnitudeIndex < MAG_SAMPLES) {
+	for (uint8_t i = 0; i < MAG_SAMPLES; i++) {
 
-		new_Magnitudes[magnitudeIndex] = (ADXL335){ //Equate most recent (MAG_SAMPLES) from SAMPLE_BUFFER (LIFO)
-				.x = SAMPLE_BUFFER[magnitudeIndex].x,
-				.y = SAMPLE_BUFFER[magnitudeIndex].y,
-				.z = SAMPLE_BUFFER[magnitudeIndex].z,
+		newMagnitudes[i] = (ADXL335){ //Equate most recent (MAG_SAMPLES) from SAMPLE_BUFFER (LIFO)
+				.x = SAMPLE_BUFFER[i].x,
+				.y = SAMPLE_BUFFER[i].y,
+				.z = SAMPLE_BUFFER[i].z,
+
 		};
-		compute_Magnitude(new_Magnitudes[magnitudeIndex]); //Store associated magnitude
-
+		compute_Magnitude(&newMagnitudes[i]); //Store associated magnitude
 	}
-
-	return new_Magnitudes; //COPY or HOLD?
+	return newMagnitudes; //COPY for processing/conditions
 }
 
-void vector_tracking() {
+void gait_cycle() {
 
+	switch (VECTOR_STATE) {
+
+	case (0): //IDLE
+
+		//if (MAG_SAMPLES) successive increases
+				//VECTOR_STATE = 1; STEP_CLOCK.BEGIN;
+
+		break; //Transition: Increasing acceleration (1,2,3...)
+
+	case (1): //MOVING
+
+		//if (CURRENT – STEP_CLOCK.BEGIN > 50%(AVG_STEP))
+				//VECTOR_STATE = 0;
+
+		//else if (0th and 1st (SAMPLE_BUFF) > Threshold)
+				//VECTOR_STATE = 1;
+
+		break; //Transition: Timeout (50% of AVG_STEP) or Break threshold
+
+	case (2): //STEPPING
+
+
+
+		break; //Transition: Timeout (≥200ms) && (2-3 samples < threshold)
+	}
+}
 //	/* Pass 1,2,3 magnitudes */
 //	switch (VECTOR_STATE) {
 //		/* Start */

@@ -30,8 +30,8 @@ typedef struct {
 extern uint8_t VECTOR_STATE;
 
 /* Function prototypes */
-ADXL335 new_Magnitudes(); //Retrieve last (MAG_SAMPLES) from sampling_Buffer; Copy and compute magnitudes.
+ADXL335 new_magnitudes(); //Get magnitude of last (MAG_SAMPLES) in SAMPLE_BUFFER in a copy;
 
-void vector_tracking(); //Control step-tracking states
+void gait_cycle(); //Control step-tracking states
 
 #endif /* INC_STEP_COUNTING_H_ */
