@@ -33,6 +33,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "self_test.h"
 #include "calibration.h"
+#include "walking_pace.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

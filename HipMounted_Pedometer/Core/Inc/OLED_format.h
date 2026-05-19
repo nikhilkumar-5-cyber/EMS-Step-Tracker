@@ -14,11 +14,13 @@
 #include "stdbool.h"
 #include <inttypes.h>
 #include <stdio.h>
+#include "main.h"
 
 /* Function Declarations */
 
 void DEFAULT_DISPLAY(void);
 void display_STEP(void);
+void display_DISTANCE(void);
 void display_WALKINGPACE(void);
 void ST_DISPLAY(bool pass);
 

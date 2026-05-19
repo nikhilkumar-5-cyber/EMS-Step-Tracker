@@ -8,6 +8,20 @@
 #ifndef INC_WALKING_PACE_H_
 #define INC_WALKING_PACE_H_
 
+/* Includes */
+#include "main.h"
 
+/* Externs */
+typedef enum {
+	STATIC,
+	WALKING,
+	RUNNING
+} WalkingPace;
+
+extern WalkingPace pace;
+
+/* Function Declarations */
+
+void walkingPace(void);
 
 #endif /* INC_WALKING_PACE_H_ */

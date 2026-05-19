@@ -13,9 +13,12 @@
 
 /* Function Implementations */
 void calibration(void) {
+	// Display going into calibration mode
 	HAL_Delay(500);
 	int size = 3;
 	float modVal;
+	// Display to tell the user to press the button to go through the direction
+	// Check if the direction is pointed the right way
 	for (int i=0; i<size; i++) {
 		modVal = ADC_to_g(ADC_VAL[i]);
 		adjVal[0][i] = 1-modVal;

@@ -68,17 +68,7 @@ volatile ADXL335_t CALIB_SAMPLE = {0};
 volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
 volatile uint32_t stepCount = 0; // Stores the count of steps
-volatile int prevStepCount; // Stores the previous step count
-volatile int stepCountTimeDiff; // Difference in time when new step count is calculated
 volatile float distanceTravelled = 0; // Distance travelled [m]
-
-typedef enum {
-	STATIC,
-	WALKING,
-	RUNNING
-} WalkingPace;
-
-WalkingPace pace = STATIC;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,7 +80,6 @@ static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 static void getValues(void);
-static void walkingPace(void);
 static int ADC_to_V(uint32_t ADC_val);
 static int g_to_ADC(float g_val);
 static void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc);
@@ -114,34 +103,6 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
 	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
 	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
-}
-
-
-void walkingPace(void) {
-	const int walkingFreqMax = 0; // FIX
-	volatile int stepFrequency = (stepCount-prevStepCount)/stepCountTimeDiff;
-	if (stepFrequency == 0) { // Checks if there hasn't been movement
-		pace = STATIC;
-		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); // RED LED (running)
-	}
-	else if (stepFrequency < walkingFreqMax) { // Checks if Pace is walking
-		pace = WALKING;
-		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); // RED LED (running)
-	}
-	else { // Pace is running
-		pace = RUNNING;
-		// Display Walking Pace as "Static/Stationary"
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // Yellow LED (stationary)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // Orange LED (walking)
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET); // RED LED (running)
-
-	}
 }
 
 int ADC_to_V(uint32_t ADC_val) {
