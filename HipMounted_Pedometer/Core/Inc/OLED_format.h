@@ -9,12 +9,7 @@
 #define INC_OLED_FORMAT_H_
 
 /* Includes */
-#include "ssd1306.h"
-#include "ssd1306_fonts.h"
 #include "stdbool.h"
-#include <inttypes.h>
-#include <stdio.h>
-#include "main.h"
 
 /* Function Declarations */
 

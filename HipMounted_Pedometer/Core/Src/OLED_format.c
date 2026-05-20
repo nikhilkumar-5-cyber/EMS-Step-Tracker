@@ -7,10 +7,16 @@
 
 /* Includes */
 #include "OLED_format.h"
+#include "ssd1306.h"
+#include "ssd1306_fonts.h"
+#include <inttypes.h>
+#include <stdio.h>
+#include "main.h"
+#include "walking_pace.h"
 
 /* Variable Definitions */
 char STEPS_TAKEN[5];
-char DISTANCE[5];
+char DISTANCE[8];
 char WALKING_PACE[15];
 
 const char* paceStrings[] = {"STATIC", "WALKING", "RUNNING"}; // To get the string for the Pace
@@ -45,7 +51,7 @@ void display_STEP(void) {
 
 void display_DISTANCE(void) {
 	// FIX: - need global variable for distance
-//	snprintf(DISTANCE, sizeof(DISTANCE), "%s m", PRIu16,);
+	snprintf(DISTANCE, sizeof(DISTANCE), "%d m", distanceTravelled);
 	ssd1306_SetCursor(86, 30);
 	ssd1306_WriteString(DISTANCE, Font_7x10, White);
 	ssd1306_UpdateScreen();

@@ -6,6 +6,7 @@
  */
 
 /* Includes */
+#include "main.h"
 #include "walking_pace.h"
 
 /* Variable Definitions */
@@ -17,11 +18,11 @@ const int walkingFreqMax = 0; // FIX
 
 /* Function Implementations */
 void walkingPace(void) {
-	if (HAL_GetTick()-prevTime < timeGap) {
+	if (HAL_GetTick()-prevTime < (timeGap*1e3)) {
 		return;
 	}
 	prevTime = HAL_GetTick();
-	volatile int stepFrequency = (stepCount-prevStepCount)/timeGap;
+	volatile int stepFrequency = ((stepCount-prevStepCount)/timeGap)*10; // gets steps per second
 	prevStepCount = stepCount;
 	if (stepFrequency == 0) { // Checks if there hasn't been movement
 		pace = STATIC;

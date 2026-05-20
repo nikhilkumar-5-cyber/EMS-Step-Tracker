@@ -31,9 +31,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "self_test.h"
-#include "calibration.h"
-#include "walking_pace.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -60,6 +57,9 @@ extern volatile ADXL335_t CALIB_SAMPLE;
 extern volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
 extern volatile uint32_t stepCount;
+extern volatile uint32_t indexVal; // Global index variable
+extern volatile int distanceTravelled; // Distance travelled [m]
+
 
 extern const float sensitivity;
 extern uint32_t ADC_VAL[3];

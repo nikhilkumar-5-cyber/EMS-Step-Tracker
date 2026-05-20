@@ -18,7 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "self_test.h"
+#include "calibration.h"
+#include "walking_pace.h"
+#include "step_counting.h"
+#include "OLED_format.h"
+#include "ssd1306.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -68,7 +73,8 @@ volatile ADXL335_t CALIB_SAMPLE = {0};
 volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
 volatile uint32_t stepCount = 0; // Stores the count of steps
-volatile float distanceTravelled = 0; // Distance travelled [m]
+volatile uint32_t indexVal = 0;
+volatile int distanceTravelled = 0; // Distance travelled [m]
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,6 +109,9 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
 	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
 	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
+
+	pushFront(SAMPLE_BUFFER, NUM_SAMPLES, RAW_SAMPLE);
+	indexVal += 1;
 }
 
 int ADC_to_V(uint32_t ADC_val) {
@@ -176,6 +185,8 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  ssd1306_Init();
+  ST_Protocol(); // Checks if ADXL is working properly
 
   /* USER CODE END 2 */
 
@@ -184,10 +195,8 @@ int main(void)
   while (1)
   {
 	  getValues(); // Gets the x,y and z values
-	   // Count steps
+	  trackGaitPhase(); // Count steps
 	  walkingPace(); // Determines Walking pace
-
-	  ST_Protocol(); // Checks if ADXL is working properly
 
 	  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {// Calibrates direction when button is pressed
 		  calibration();
@@ -197,7 +206,8 @@ int main(void)
 	  		stepCount = 0;
 	  }
 
-	   // Calculates the distance travelled
+	  // Calculates the distance travelled
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

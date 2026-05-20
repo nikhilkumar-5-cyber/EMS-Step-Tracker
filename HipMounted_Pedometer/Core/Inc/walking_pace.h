@@ -9,7 +9,6 @@
 #define INC_WALKING_PACE_H_
 
 /* Includes */
-#include "main.h"
 
 /* Externs */
 typedef enum {
