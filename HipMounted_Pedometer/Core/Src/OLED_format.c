@@ -44,7 +44,8 @@ void display_STEP(void) {
 }
 
 void display_DISTANCE(void) {
-	snprintf(DISTANCE, sizeof(DISTANCE), "%s m", PRIu16,); // Fix - need global variable for distance
+	// FIX: - need global variable for distance
+//	snprintf(DISTANCE, sizeof(DISTANCE), "%s m", PRIu16,);
 	ssd1306_SetCursor(86, 30);
 	ssd1306_WriteString(DISTANCE, Font_7x10, White);
 	ssd1306_UpdateScreen();
