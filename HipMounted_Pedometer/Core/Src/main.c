@@ -55,9 +55,9 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 int isADCFinished = 0;
 uint32_t ADC_VAL[3] = {0,0,0}; // Store raw X, Y and Z values in a array
-float adjVal[2][3] = { // Stores the adjustment value for +-x, +-y, +-z,
-		{1, 1, 1},
-		{1, 1, 1}
+float adjVal[2][3] = { // Stores the calibration values
+		{0, 0, 0},
+		{0, 0, 0}
 };
 
 const float STM_res = 4095; // STM resolution
@@ -85,7 +85,6 @@ static void MX_USART2_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-static void getValues(void);
 static int ADC_to_V(uint32_t ADC_val);
 static int g_to_ADC(float g_val);
 static void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc);
@@ -111,7 +110,7 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
 
 	pushFront(SAMPLE_BUFFER, NUM_SAMPLES, RAW_SAMPLE);
-	indexVal += 1;
+	indexVal++;
 }
 
 int ADC_to_V(uint32_t ADC_val) {
@@ -198,12 +197,13 @@ int main(void)
 	  trackGaitPhase(); // Count steps
 	  walkingPace(); // Determines Walking pace
 
-	  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)==GPIO_PIN_RESET) {// Calibrates direction when button is pressed
+	  if (HAL_GPIO_ReadPin(Button_IN_CALI_GPIO_Port, Button_IN_CALI_Pin)==GPIO_PIN_RESET) {// Calibrates direction when button is pressed
 		  calibration();
 	  }
 
-	  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {// Resets Counter when reset button is pressed
+	  if (HAL_GPIO_ReadPin(Button_IN_RESET_GPIO_Port, Button_IN_RESET_Pin) == GPIO_PIN_RESET) {// Resets Counter when reset button is pressed
 	  		stepCount = 0;
+	  		distanceTravelled = 0;
 	  }
 
 	  // Calculates the distance travelled
