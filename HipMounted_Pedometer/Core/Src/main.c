@@ -18,12 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "self_test.h"
-#include "calibration.h"
-#include "walking_pace.h"
-#include "step_counting.h"
-#include "OLED_format.h"
 #include "ssd1306.h"
+#include "self_test.h"
+#include "step_counting.h"
+#include "walking_pace.h"
+#include "calibration.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -87,7 +87,6 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 static int ADC_to_V(uint32_t ADC_val);
 static int g_to_ADC(float g_val);
-static void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -144,7 +143,7 @@ void get_ADC_Values(void) {
 	isADCFinished = 0;
 }
 
-void HAL_ADC_ConvoCpltCallback(ADC_HandleTypeDef *hadc) {
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	isADCFinished = 1;
 }
 
@@ -301,7 +300,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -320,7 +319,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
