@@ -62,9 +62,9 @@ float adjVal[2][3] = { // Stores the calibration values
 
 const float STM_res = 4095; // STM resolution
 const float refV = 3.3; //[V]
-const float sensitivity = 0.33; // [V/g]
-// ADC value at 0g [half of 3.3 * max ADC value]
-const float zero_gBias = (refV/2)*STM_res;
+const float sensitivity = 0.33; // [V/g] 330 mV/g
+// ADC value at 0g [max ADC value divided by 2]
+const float zero_gBias = STM_res/2;
 // The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
 const float ADC_per_gVal = (sensitivity/refV)*(STM_res);
 
