@@ -40,7 +40,7 @@ void calibrationLoop(bool forNegative) {
 		while (HAL_GPIO_ReadPin(Button_IN_CALI_GPIO_Port, Button_IN_CALI_Pin) != GPIO_PIN_RESET) {}
 		getValues();
 		modVal = ADC_to_g(ADC_VAL[directionsCompleted]);
-		int absModVal = fabsf(modVal);
+		float absModVal = fabsf(modVal);
 		/* Check if the direction is pointed the right way */
 		if (absModVal >= 0.9 && absModVal <= 1.1)
 		{

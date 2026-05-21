@@ -95,6 +95,9 @@ void Cali_Display(bool isNegative, uint16_t direction) {
 		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for -%s", directionStrings[direction]);
 	}
 	Display(CALIBRATION, Font_7x10);
+
+	// Display Arrow
+	Arrow_Display(isNegative, direction);
 }
 void Cali_Error_Display(void) {
 	char Cali_Error_text[] = "Calibration Failed";
@@ -110,5 +113,31 @@ void Display(char* str, SSD1306_Font_t Font) {
 	ssd1306_Fill(Black);
 	ssd1306_SetCursor(5, 5);
 	ssd1306_WriteString(str, Font, White);
+	ssd1306_UpdateScreen();
+}
+
+void Arrow_Display(bool isNegative, uint16_t direction) {
+	ssd1306_SetCursor(25, 50); // For arrow head...maybe...? idk how this would work without testing
+	uint8_t x1, y1, x2, y2;
+
+	switch (direction) {
+	case 0: // X
+		// Draw a Horizontal Line
+		x1 = 25; y1 = 40;
+		x2 = 55; y2 = 40;
+		break;
+	case 1: // Y
+		// Draw a vertical Line
+		x1 = 64; y1 = 25;
+		x2 = 64; y2 = 55;
+		break;
+	case 2: // Z
+		// Draw a Horizontal Line
+		x1 = 25; y1 = 40;
+		x2 = 55; y2 = 40;
+		break;
+	}
+
+	ssd1306_Line(x1, y1, x2, y2, White);
 	ssd1306_UpdateScreen();
 }

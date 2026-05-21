@@ -23,6 +23,15 @@ void Cali_Start_Display(void);
 void Cali_Display(bool isNegative, uint16_t direction);
 void Cali_Error_Display(void);
 void Cali_Finished_Display(void);
-void Display(char* str, SSD1306_Font_t Font); // To display just a line on the OLED, automatically resets and updates screen
+
+/**
+ * @brief Helper Function To display just a line on the OLED, automatically resets and updates screen
+ */
+void Display(char* str, SSD1306_Font_t Font);
+
+/**
+ * @brief Helper Function To display a arrow based on direction (+-X, +-Y, +-Z)
+ */
+void Arrow_Display(bool isNegative, uint16_t direction);
 
 #endif /* INC_OLED_FORMAT_H_ */
