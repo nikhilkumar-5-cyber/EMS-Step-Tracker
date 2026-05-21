@@ -32,23 +32,27 @@ void calibrationLoop(bool forNegative) {
 	float modVal;
 	int adjIndexValue = forNegative;
 
-	// Calibrate for directions
+	/* Calibrate for directions */
 	while (directionsCompleted < 3) {
-		// Display to tell the user to press the button to go through the direction
-		// Display what direction to point the pedometer
+		/*Display to tell the user to press the button to go through the direction
+		 Display what direction to point the pedometer */
 		Cali_Display(forNegative, directionsCompleted);
 		while (HAL_GPIO_ReadPin(Button_IN_CALI_GPIO_Port, Button_IN_CALI_Pin) != GPIO_PIN_RESET) {}
 		getValues();
 		modVal = ADC_to_g(ADC_VAL[directionsCompleted]);
 		int absModVal = fabsf(modVal);
-		if (absModVal >= 0.9 && absModVal <= 1.1) { // Check if the direction is pointed the right way
-			adjVal[adjIndexValue][directionsCompleted] = modVal-1; // The difference from 1g
+		/* Check if the direction is pointed the right way */
+		if (absModVal >= 0.9 && absModVal <= 1.1)
+		{
+			adjVal[adjIndexValue][directionsCompleted] = absModVal-1; // The difference from 1g
 			directionPassed = true;
 		}
-		else {
+		else
+		{
 			directionPassed = false;
 		}
 
+		/* Check if the direction is Calibrated */
 		if (directionPassed) {
 			directionsCompleted++;
 			directionPassed = false;

@@ -98,10 +98,10 @@ void getValues(void) { // Gets the ADC values and converts them to g values and 
 	for (int i=0; i<3; i++) {
 		// Checks if the g-val
 		if (ADC_to_g(ADC_VAL[i])< 0) {
-			ADC_VAL[i] = ADC_VAL[i]*adjVal[1][i];
+			ADC_VAL[i] = ADC_VAL[i]+adjVal[1][i];
 		}
 		else {
-			ADC_VAL[i] = ADC_VAL[i]*adjVal[1][i];
+			ADC_VAL[i] = ADC_VAL[i]-adjVal[1][i];
 		}
 	}
 	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);

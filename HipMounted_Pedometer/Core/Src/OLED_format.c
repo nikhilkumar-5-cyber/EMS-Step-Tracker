@@ -94,6 +94,7 @@ void Cali_Display(bool isNegative, uint16_t direction) {
 	else {
 		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for -%s", directionStrings[direction]);
 	}
+	Display(CALIBRATION, Font_7x10);
 }
 void Cali_Error_Display(void) {
 	char Cali_Error_text[] = "Calibration Failed";

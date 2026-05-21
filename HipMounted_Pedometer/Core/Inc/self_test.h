@@ -10,7 +10,6 @@
 
 /* Includes */
 #include "main.h"
-#include "OLED_format.h"
 
 /* Function Declarations */
 
