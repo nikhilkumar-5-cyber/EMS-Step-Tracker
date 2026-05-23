@@ -11,7 +11,6 @@
 /* Includes */
 
 /* Function Declarations */
-
 void ST_Protocol(void);
 
 #endif /* INC_SELF_TEST_H_ */

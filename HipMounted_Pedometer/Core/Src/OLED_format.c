@@ -25,18 +25,18 @@ const char* directionStrings[] = {"X", "Y", "Z"};
 /* Function Implementations */
 void DEFAULT_DISPLAY(void) {
 	ssd1306_Fill(Black);
-	// Constant char
+	/* Constant chars */
 	char STEP_text[] = "Total Steps: ";
 	char DIST_text[] = "Distance: ";
 	char PACE_text[] = "Pace: ";
 
-	// Display Step Count Title
+	/* Display Step Count Title */
 	ssd1306_SetCursor(5, 5);
 	ssd1306_WriteString(STEP_text, Font_7x10, White);
-	//Display Distance Title
+	/* Display Distance Title */
 	ssd1306_SetCursor(5, 30);
 	ssd1306_WriteString(DIST_text, Font_7x10, White);
-	// Display Walking Pace Title
+	/* Display Walking Pace Title */
 	ssd1306_SetCursor(5, 60);
 	ssd1306_WriteString(PACE_text, Font_7x10, White);
 
@@ -44,6 +44,7 @@ void DEFAULT_DISPLAY(void) {
 }
 
 void display_STEP(void) {
+	/* Combine step count into the char array and then display it */
 	snprintf(STEPS_TAKEN, 5, PRIu16, stepCount);
 	ssd1306_SetCursor(86, 5);
 	ssd1306_WriteString(STEPS_TAKEN, Font_7x10, White);
@@ -51,6 +52,7 @@ void display_STEP(void) {
 }
 
 void display_DISTANCE(void) {
+	/* Combine distance into the char array and then display it */
 	// FIX: - need global variable for distance
 	snprintf(DISTANCE, sizeof(DISTANCE), "%d m", distanceTravelled);
 	ssd1306_SetCursor(86, 30);
@@ -59,6 +61,7 @@ void display_DISTANCE(void) {
 }
 
 void display_WALKINGPACE(void) {
+	/* Combine walking pace into the char array and then display it */
 	snprintf(WALKING_PACE, sizeof(WALKING_PACE), paceStrings[pace]);
 	ssd1306_SetCursor(86, 60);
 	ssd1306_WriteString(WALKING_PACE, Font_7x10, White);
@@ -67,11 +70,11 @@ void display_WALKINGPACE(void) {
 
 void ST_DISPLAY(bool pass) {
 	ssd1306_Fill(Black);
-	// Constant char
+	/* Constant chars */
 	char ST_pass_text[] = "Passed ST Protocol";
 	char ST_fail_text[] = "Failed ST Protocol";
 
-	// Display if ST protocol has passed
+	/* Display if ST protocol has passed or failed */
 	ssd1306_SetCursor(5, 5);
 	if (pass) {
 		ssd1306_WriteString(ST_pass_text, Font_7x10, White);
@@ -88,6 +91,7 @@ void Cali_Start_Display(void) {
 }
 
 void Cali_Display(bool isNegative, uint16_t direction) {
+	/* Display correct direction */
 	if (!isNegative) {
 		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for +%s", directionStrings[direction]);
 	}
@@ -96,7 +100,7 @@ void Cali_Display(bool isNegative, uint16_t direction) {
 	}
 	Display(CALIBRATION, Font_7x10);
 
-	// Display Arrow
+	/* Display Arrow */
 	Arrow_Display(isNegative, direction);
 }
 void Cali_Error_Display(void) {
@@ -117,6 +121,7 @@ void Display(char* str, SSD1306_Font_t Font) {
 }
 
 void Arrow_Display(bool isNegative, uint16_t direction) {
+	/* Display Arrow */
 	ssd1306_SetCursor(25, 50); // For arrow head...maybe...? idk how this would work without testing
 	uint8_t x1, y1, x2, y2;
 

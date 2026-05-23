@@ -13,7 +13,14 @@
 
 /* Function Declarations */
 
+/*
+ * @brief Calibrates all six directions
+ * */
 void calibration(void);
+
+/*
+ * @brief Helper function to calibrate X,Y and Z values based on direction (+/-)
+ * */
 void calibrationLoop(bool forPositive);
 
 #endif /* INC_CALIBRATION_H_ */
