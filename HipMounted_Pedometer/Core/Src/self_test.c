@@ -8,6 +8,7 @@
 /* Includes */
 #include "self_test.h"
 #include "OLED_format.h"
+#include "ADC.h"
 
 /* Variable Definitions */
 

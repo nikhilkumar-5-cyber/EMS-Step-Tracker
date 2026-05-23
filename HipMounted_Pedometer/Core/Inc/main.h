@@ -60,8 +60,6 @@ extern volatile uint32_t stepCount;
 extern volatile uint32_t indexVal; // Global index variable
 extern volatile int distanceTravelled; // Distance travelled [m]
 
-
-extern const float sensitivity;
 extern uint32_t ADC_VAL[3];
 extern float adjVal[2][3];
 

@@ -53,20 +53,11 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-int isADCFinished = 0;
 uint32_t ADC_VAL[3] = {0,0,0}; // Store raw X, Y and Z values in a array
 float adjVal[2][3] = { // Stores the calibration values
 		{0, 0, 0},
 		{0, 0, 0}
 };
-
-const float STM_res = 4095; // STM resolution
-const float refV = 3.3; //[V]
-const float sensitivity = 0.33; // [V/g] 330 mV/g
-// ADC value at 0g [max ADC value divided by 2]
-const float zero_gBias = STM_res/2;
-// The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
-const float ADC_per_gVal = (sensitivity/refV)*(STM_res);
 
 volatile ADXL335_t RAW_SAMPLE = {0};
 volatile ADXL335_t CALIB_SAMPLE = {0};
@@ -85,67 +76,10 @@ static void MX_USART2_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-static int ADC_to_V(uint32_t ADC_val);
-static int g_to_ADC(float g_val);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-void getValues(void) { // Gets the ADC values and converts them to g values and adjusts them based on calibrated values
-	get_ADC_Values();
-	// Adjusts values based on calibrated values
-	for (int i=0; i<3; i++) {
-		// Checks if the g-val
-		if (ADC_to_g(ADC_VAL[i])< 0) {
-			ADC_VAL[i] = ADC_VAL[i]+adjVal[1][i];
-		}
-		else {
-			ADC_VAL[i] = ADC_VAL[i]-adjVal[1][i];
-		}
-	}
-	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
-	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
-	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
-
-	pushFront(SAMPLE_BUFFER, NUM_SAMPLES, RAW_SAMPLE);
-	indexVal++;
-}
-
-int ADC_to_V(uint32_t ADC_val) {
-	// Converts value to mV
-	int converted_val = ADC_val*(refV/STM_res);
-	return converted_val;
-}
-
-float ADC_to_g(uint32_t ADC_val) {
-	// Converts ADC value to g
-	float gVal = (ADC_to_V(ADC_val)-zero_gBias)/sensitivity;
-	return gVal;
-}
-
-int g_to_ADC(float g_val) {
-	// Converts g value to ADC
-	float ADCval;
-	if (g_val > 0) {
-		ADCval = zero_gBias + (ADC_per_gVal*g_val);
-	}
-	if (g_val < 0) {
-		ADCval = zero_gBias - (ADC_per_gVal*g_val);
-	}
-	return ADCval;
-}
-
-void get_ADC_Values(void) {
-	// Function reads the ADC values of X, Y and Z and puts it in the ADC_VAL array
-	HAL_ADC_Start_DMA(&hadc1, ADC_VAL, 3);
-	while (isADCFinished != 1) {}
-	isADCFinished = 0;
-}
-
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
-	isADCFinished = 1;
-}
 
 /* USER CODE END 0 */
 
@@ -166,7 +100,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  ssd1306_Init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -183,7 +117,6 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  ssd1306_Init();
   ST_Protocol(); // Checks if ADXL is working properly
 
   /* USER CODE END 2 */

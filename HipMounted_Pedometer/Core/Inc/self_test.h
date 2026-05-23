@@ -9,7 +9,6 @@
 #define INC_SELF_TEST_H_
 
 /* Includes */
-#include "main.h"
 
 /* Function Declarations */
 
