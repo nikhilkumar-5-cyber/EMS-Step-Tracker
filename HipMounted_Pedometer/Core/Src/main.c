@@ -24,6 +24,8 @@
 #include "walking_pace.h"
 #include "calibration.h"
 
+#include "testComponents.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -117,7 +119,7 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  ST_Protocol(); // Checks if ADXL is working properly
+//  ST_Protocol(); // Checks if ADXL is working properly
 
   /* USER CODE END 2 */
 
@@ -125,6 +127,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  /* Testing */
+	  testLEDS(); // Turns off and on the LEDS
+	  testButtons(); // Prints which button is pressed
+	  testADXL(); // Prints X, Y and Z values
+
+	  /* Real Software */
 	  getValues(); // Gets the x,y and z values
 	  trackGaitPhase(); // Count steps
 	  walkingPace(); // Determines Walking pace

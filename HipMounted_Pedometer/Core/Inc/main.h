@@ -63,6 +63,7 @@ extern volatile int distanceTravelled; // Distance travelled [m]
 extern uint32_t ADC_VAL[3];
 extern float adjVal[2][3];
 
+extern UART_HandleTypeDef huart2;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
