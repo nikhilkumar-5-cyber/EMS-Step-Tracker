@@ -25,59 +25,70 @@ const char* directionStrings[] = {"X", "Y", "Z"};
 /* Function Implementations */
 void DEFAULT_DISPLAY(void) {
 	ssd1306_Fill(Black);
-	// Constant char
+	/* Constant chars */
 	char STEP_text[] = "Total Steps: ";
 	char DIST_text[] = "Distance: ";
 	char PACE_text[] = "Pace: ";
 
-	// Display Step Count Title
+	/* Display Step Count Title */
 	ssd1306_SetCursor(5, 5);
 	ssd1306_WriteString(STEP_text, Font_7x10, White);
-	//Display Distance Title
+	HAL_UART_Transmit(&huart2, (uint8_t *)STEP_text, sizeof(STEP_text), HAL_MAX_DELAY); // Testing
+	/* Display Distance Title */
 	ssd1306_SetCursor(5, 30);
 	ssd1306_WriteString(DIST_text, Font_7x10, White);
-	// Display Walking Pace Title
+	HAL_UART_Transmit(&huart2, (uint8_t *)DIST_text, sizeof(DIST_text), HAL_MAX_DELAY); // Testing
+	/* Display Walking Pace Title */
 	ssd1306_SetCursor(5, 60);
 	ssd1306_WriteString(PACE_text, Font_7x10, White);
+	HAL_UART_Transmit(&huart2, (uint8_t *)PACE_text, sizeof(PACE_text), HAL_MAX_DELAY); // Testing
 
 	ssd1306_UpdateScreen();
 }
 
 void display_STEP(void) {
+	/* Combine step count into the char array and then display it */
 	snprintf(STEPS_TAKEN, 5, PRIu16, stepCount);
 	ssd1306_SetCursor(86, 5);
 	ssd1306_WriteString(STEPS_TAKEN, Font_7x10, White);
+	HAL_UART_Transmit(&huart2, (uint8_t *)STEPS_TAKEN, sizeof(STEPS_TAKEN), HAL_MAX_DELAY); // Testing
 	ssd1306_UpdateScreen();
 }
 
 void display_DISTANCE(void) {
+	/* Combine distance into the char array and then display it */
 	// FIX: - need global variable for distance
 	snprintf(DISTANCE, sizeof(DISTANCE), "%d m", distanceTravelled);
 	ssd1306_SetCursor(86, 30);
 	ssd1306_WriteString(DISTANCE, Font_7x10, White);
+	HAL_UART_Transmit(&huart2, (uint8_t *)DISTANCE, sizeof(DISTANCE), HAL_MAX_DELAY); // Testing
 	ssd1306_UpdateScreen();
 }
 
 void display_WALKINGPACE(void) {
+	/* Combine walking pace into the char array and then display it */
 	snprintf(WALKING_PACE, sizeof(WALKING_PACE), paceStrings[pace]);
 	ssd1306_SetCursor(86, 60);
 	ssd1306_WriteString(WALKING_PACE, Font_7x10, White);
+	HAL_UART_Transmit(&huart2, (uint8_t *)WALKING_PACE, sizeof(WALKING_PACE), HAL_MAX_DELAY); // Testing
 	ssd1306_UpdateScreen();
 }
 
 void ST_DISPLAY(bool pass) {
 	ssd1306_Fill(Black);
-	// Constant char
+	/* Constant chars */
 	char ST_pass_text[] = "Passed ST Protocol";
 	char ST_fail_text[] = "Failed ST Protocol";
 
-	// Display if ST protocol has passed
+	/* Display if ST protocol has passed or failed */
 	ssd1306_SetCursor(5, 5);
 	if (pass) {
 		ssd1306_WriteString(ST_pass_text, Font_7x10, White);
+		HAL_UART_Transmit(&huart2, (uint8_t *)ST_pass_text, sizeof(ST_pass_text), HAL_MAX_DELAY); // Testing
 	}
 	else {
 		ssd1306_WriteString(ST_fail_text, Font_7x10, White);
+		HAL_UART_Transmit(&huart2, (uint8_t *)ST_fail_text, sizeof(ST_fail_text), HAL_MAX_DELAY); // Testing
 	}
 	ssd1306_UpdateScreen();
 }
@@ -85,29 +96,65 @@ void ST_DISPLAY(bool pass) {
 void Cali_Start_Display(void) {
 	char start_text[] = "Beginning Calibration";
 	Display(start_text, Font_7x10);
+	HAL_UART_Transmit(&huart2, (uint8_t *)start_text, sizeof(start_text), HAL_MAX_DELAY); // Testing
 }
 
 void Cali_Display(bool isNegative, uint16_t direction) {
+	/* Display correct direction */
 	if (!isNegative) {
 		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for +%s", directionStrings[direction]);
 	}
 	else {
 		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for -%s", directionStrings[direction]);
 	}
+	Display(CALIBRATION, Font_7x10);
+	HAL_UART_Transmit(&huart2, (uint8_t *)CALIBRATION, sizeof(CALIBRATION), HAL_MAX_DELAY); // Testing
+
+	/* Display Arrow */
+	Arrow_Display(isNegative, direction);
 }
 void Cali_Error_Display(void) {
 	char Cali_Error_text[] = "Calibration Failed";
 	Display(Cali_Error_text, Font_7x10);
+	HAL_UART_Transmit(&huart2, (uint8_t *)Cali_Error_text, sizeof(Cali_Error_text), HAL_MAX_DELAY); // Testing
 }
 
 void Cali_Finished_Display(void) {
 	char Cali_Finished_text[] = "Calibration Completed";
 	Display(Cali_Finished_text, Font_7x10);
+	HAL_UART_Transmit(&huart2, (uint8_t *)Cali_Finished_text, sizeof(Cali_Finished_text), HAL_MAX_DELAY); // Testing
 }
 
 void Display(char* str, SSD1306_Font_t Font) {
 	ssd1306_Fill(Black);
 	ssd1306_SetCursor(5, 5);
 	ssd1306_WriteString(str, Font, White);
+	ssd1306_UpdateScreen();
+}
+
+void Arrow_Display(bool isNegative, uint16_t direction) {
+	/* Display Arrow */
+	ssd1306_SetCursor(25, 50); // For arrow head...maybe...? idk how this would work without testing
+	uint8_t x1, y1, x2, y2;
+
+	switch (direction) {
+	case 0: // X
+		// Draw a Horizontal Line
+		x1 = 25; y1 = 40;
+		x2 = 55; y2 = 40;
+		break;
+	case 1: // Y
+		// Draw a vertical Line
+		x1 = 64; y1 = 25;
+		x2 = 64; y2 = 55;
+		break;
+	case 2: // Z
+		// Draw a Horizontal Line
+		x1 = 25; y1 = 40;
+		x2 = 55; y2 = 40;
+		break;
+	}
+
+	ssd1306_Line(x1, y1, x2, y2, White);
 	ssd1306_UpdateScreen();
 }

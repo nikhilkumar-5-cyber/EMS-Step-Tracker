@@ -20,7 +20,6 @@ typedef enum {
 extern WalkingPace pace;
 
 /* Function Declarations */
-
 void walkingPace(void);
 
 #endif /* INC_WALKING_PACE_H_ */
