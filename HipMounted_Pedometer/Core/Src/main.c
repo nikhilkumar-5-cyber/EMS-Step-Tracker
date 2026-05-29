@@ -184,8 +184,8 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  ssd1306_Init();
-  ST_Protocol(); // Checks if ADXL is working properly
+//  ssd1306_Init();
+//  ST_Protocol(); // Checks if ADXL is working properly
 
   /* USER CODE END 2 */
 
