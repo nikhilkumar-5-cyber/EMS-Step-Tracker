@@ -55,7 +55,7 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint32_t ADC_VAL[3] = {0,0,0}; // Store raw X, Y and Z values in a array
+uint16_t ADC_VAL[3] = {0,0,0}; // Store raw X, Y and Z values in a array
 float adjVal[2][3] = { // Stores the calibration values
 		{0, 0, 0},
 		{0, 0, 0}
@@ -103,6 +103,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   ssd1306_Init();
+  //  ST_Protocol(); // Checks if ADXL is working properly
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -119,11 +120,6 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-<<<<<<< HEAD
-//  ssd1306_Init();
-=======
->>>>>>> branch 'main' of https://github.com/nikhilkumar-5-cyber/EMS-Step-Tracker.git
-//  ST_Protocol(); // Checks if ADXL is working properly
 
   /* USER CODE END 2 */
 
@@ -132,9 +128,9 @@ int main(void)
   while (1)
   {
 	  /* Testing */
-	  testLEDS(); // Turns off and on the LEDS
-	  testButtons(); // Prints which button is pressed
-	  testADXL(); // Prints X, Y and Z values
+//	  testLEDS(); // Turns off and on the LEDS
+//	  testButtons(); // Prints which button is pressed
+//	  testADXL(); // Prints X, Y and Z values
 
 	  /* Real Software */
 	  getValues(); // Gets the x,y and z values

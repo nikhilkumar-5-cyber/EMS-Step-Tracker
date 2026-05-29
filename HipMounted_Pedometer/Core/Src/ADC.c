@@ -65,7 +65,7 @@ int g_to_ADC(float g_val) {
 
 void get_ADC_Values(void) {
 	/* Function reads the ADC values of X, Y and Z and puts it in the ADC_VAL array */
-	HAL_ADC_Start_DMA(&hadc1, ADC_VAL, 3);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)ADC_VAL, 3);
 	while (isADCFinished != 1) {}
 	isADCFinished = 0;
 }
