@@ -12,10 +12,10 @@
 /* Variable Definitions */
 int isADCFinished = 0;
 const float STM_res = 4095; // STM resolution
-const float refV = 3.3; //[V]
-const float sensitivity = 0.33; // [V/g] 330 mV/g
-const float zero_gBias = STM_res/2; // ADC value at 0g [max ADC value divided by 2]
-const float ADC_per_gVal = (sensitivity/refV)*(STM_res); // The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
+const double refV = 3.3; //[V]
+const double sensitivity = 0.34; // [V/g] 330 mV/g
+const double zero_gBias = STM_res/2; // ADC value at 0g [max ADC value divided by 2]
+const double ADC_per_gVal = (sensitivity/refV)*(STM_res); // The ADC value between a difference in 1 g - [(sensitivity/ref voltage)*(STM resolution)]
 
 /* Function Implementations */
 void getValues(void) {
@@ -39,19 +39,19 @@ void getValues(void) {
 	indexVal++;
 }
 
-int ADC_to_V(uint32_t ADC_val) {
+double ADC_to_V(uint32_t ADC_val) {
 	/* Converts ADC value to V */
-	int converted_val = ADC_val*(refV/STM_res);
+	double converted_val = ADC_val*(refV/STM_res);
 	return converted_val;
 }
 
-float ADC_to_g(uint32_t ADC_val) {
+double ADC_to_g(uint32_t ADC_val) {
 	/* Converts ADC value to g */
-	float gVal = (ADC_to_V(ADC_val)-zero_gBias)/sensitivity;
+	double gVal = (ADC_val-zero_gBias)/ADC_per_gVal;
 	return gVal;
 }
 
-int g_to_ADC(float g_val) {
+double g_to_ADC(double g_val) {
 	/* Converts g value to ADC */
 	float ADCval;
 	if (g_val > 0) {

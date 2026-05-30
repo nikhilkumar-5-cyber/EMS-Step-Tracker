@@ -82,7 +82,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 void get_ADC_Values(void);
 void getValues(void);
-float ADC_to_g(uint32_t ADC_val);
+double ADC_to_g(uint32_t ADC_val);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

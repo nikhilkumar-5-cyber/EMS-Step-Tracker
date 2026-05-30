@@ -77,8 +77,8 @@ void display_WALKINGPACE(void) {
 void ST_DISPLAY(bool pass) {
 	ssd1306_Fill(Black);
 	/* Constant chars */
-	char ST_pass_text[] = "Passed ST Protocol";
-	char ST_fail_text[] = "Failed ST Protocol";
+	char ST_pass_text[] = "Passed ST Protocol\n";
+	char ST_fail_text[] = "Failed ST Protocol\n";
 
 	/* Display if ST protocol has passed or failed */
 	ssd1306_SetCursor(5, 5);
@@ -90,7 +90,7 @@ void ST_DISPLAY(bool pass) {
 		ssd1306_WriteString(ST_fail_text, Font_7x10, White);
 		HAL_UART_Transmit(&huart2, (uint8_t *)ST_fail_text, sizeof(ST_fail_text), HAL_MAX_DELAY); // Testing
 	}
-	ssd1306_UpdateScreen();
+//	ssd1306_UpdateScreen();
 }
 
 void Cali_Start_Display(void) {

@@ -68,6 +68,7 @@ volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 volatile uint32_t stepCount = 0; // Stores the count of steps
 volatile uint32_t indexVal = 0;
 volatile int distanceTravelled = 0; // Distance travelled [m]
+volatile uint32_t lastValuesTime =0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,7 +104,6 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   ssd1306_Init();
-  //  ST_Protocol(); // Checks if ADXL is working properly
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -120,7 +120,8 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_ADCEx_Calibration_Start(&hadc1);
+  ST_Protocol(); // Checks if ADXL is working properly
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,7 +134,10 @@ int main(void)
 //	  testADXL(); // Prints X, Y and Z values
 
 	  /* Real Software */
-	  getValues(); // Gets the x,y and z values
+	  if (HAL_GetTick()- lastValuesTime >= 58) {
+	  	  lastValuesTime = HAL_GetTick();
+	  	  getValues(); // Gets the x,y and z values
+	  }
 	  trackGaitPhase(); // Count steps
 	  walkingPace(); // Determines Walking pace
 
