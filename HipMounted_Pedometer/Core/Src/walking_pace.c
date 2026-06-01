@@ -14,7 +14,7 @@ WalkingPace pace = STATIC; // Stores the current walking pace
 volatile uint16_t prevStepCount; // Stores the previous step count
 volatile uint32_t prevTime; // last time when pace was calculated
 const float timeGap = 0.1; // Difference in time before getting new step count [s]
-const int walkingFreqMax = 0; // FIX | Stores the max walking frequency (steps per second)
+const int walkingFreqMax = 3; // FIX | Stores the max walking frequency (steps per second)
 
 /* Function Implementations */
 void walkingPace(void) {

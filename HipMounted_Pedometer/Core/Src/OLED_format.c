@@ -33,23 +33,24 @@ void DEFAULT_DISPLAY(void) {
 	/* Display Step Count Title */
 	ssd1306_SetCursor(5, 5);
 	ssd1306_WriteString(STEP_text, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)STEP_text, sizeof(STEP_text), HAL_MAX_DELAY); // Testing
+	display_STEP();
 	/* Display Distance Title */
 	ssd1306_SetCursor(5, 25);
 	ssd1306_WriteString(DIST_text, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)DIST_text, sizeof(DIST_text), HAL_MAX_DELAY); // Testing
+	display_DISTANCE();
 	/* Display Walking Pace Title */
 	ssd1306_SetCursor(5, 45);
 	ssd1306_WriteString(PACE_text, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)PACE_text, sizeof(PACE_text), HAL_MAX_DELAY); // Testing
-
+	display_WALKINGPACE();
 	ssd1306_UpdateScreen();
 }
 
 void UPDATE_DEFAULT_DISPLAY(void) {
+	DEFAULT_DISPLAY();
 	display_STEP();
 	display_DISTANCE();
 	display_WALKINGPACE();
+	ssd1306_UpdateScreen();
 }
 
 void display_STEP(void) {
@@ -57,8 +58,6 @@ void display_STEP(void) {
 	snprintf(STEPS_TAKEN, 5, "%d", stepCount);
 	ssd1306_SetCursor(86, 5);
 	ssd1306_WriteString(STEPS_TAKEN, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)STEPS_TAKEN, sizeof(STEPS_TAKEN), HAL_MAX_DELAY); // Testing
-	ssd1306_UpdateScreen();
 }
 
 void display_DISTANCE(void) {
@@ -67,8 +66,6 @@ void display_DISTANCE(void) {
 	snprintf(DISTANCE, sizeof(DISTANCE), "%d m", distanceTravelled);
 	ssd1306_SetCursor(65, 25);
 	ssd1306_WriteString(DISTANCE, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)DISTANCE, sizeof(DISTANCE), HAL_MAX_DELAY); // Testing
-	ssd1306_UpdateScreen();
 }
 
 void display_WALKINGPACE(void) {
@@ -76,8 +73,6 @@ void display_WALKINGPACE(void) {
 	snprintf(WALKING_PACE, sizeof(WALKING_PACE), paceStrings[pace]);
 	ssd1306_SetCursor(40, 45);
 	ssd1306_WriteString(WALKING_PACE, Font_6x8, White);
-	HAL_UART_Transmit(&huart2, (uint8_t *)WALKING_PACE, sizeof(WALKING_PACE), HAL_MAX_DELAY); // Testing
-	ssd1306_UpdateScreen();
 }
 
 void ST_DISPLAY(bool pass) {
@@ -107,13 +102,17 @@ void Cali_Start_Display(void) {
 
 void Cali_Display(bool isNegative, uint16_t direction) {
 	/* Display correct direction */
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(5, 5);
+	ssd1306_WriteString("Face the Arrow Down", Font_6x8, White);
 	if (!isNegative) {
-		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for +%s", directionStrings[direction]);
+		snprintf(CALIBRATION, sizeof(CALIBRATION), "for +%s", directionStrings[direction]);
 	}
 	else {
-		snprintf(CALIBRATION, sizeof(CALIBRATION), "Face the Arrow Down for -%s", directionStrings[direction]);
+		snprintf(CALIBRATION, sizeof(CALIBRATION), "for -%s", directionStrings[direction]);
 	}
-	Display(CALIBRATION, Font_6x8);
+	ssd1306_SetCursor(5, 15);
+	ssd1306_WriteString(CALIBRATION, Font_6x8, White);
 	HAL_UART_Transmit(&huart2, (uint8_t *)CALIBRATION, sizeof(CALIBRATION), HAL_MAX_DELAY); // Testing
 
 	/* Display Arrow */
@@ -144,24 +143,48 @@ void Arrow_Display(bool isNegative, uint16_t direction) {
 
 	switch (direction) {
 	case 0: // X
-		// Draw a Horizontal Line
-		x1 = 25; y1 = 40;
-		x2 = 55; y2 = 40;
-		ssd1306_SetCursor(x2, y2-3);
-		ssd1306_WriteString(">", Font_6x8, White);
-		break;
-	case 1: // Y
 		// Draw a vertical Line
 		x1 = 64; y1 = 25;
 		x2 = 64; y2 = 55;
+		ssd1306_SetCursor(25, 50); // For arrow body
+		ssd1306_Line(x1, y1, x2, y2, White);
+		if (isNegative) {
+			ssd1306_SetCursor(x1-3, y2);
+			ssd1306_Line(60, 55, 64, 60, White);
+			ssd1306_Line(64, 60, 68, 55, White);
+		}
+		else {
+			ssd1306_SetCursor(x2-3, y1);
+			ssd1306_Line(60, 25, 64, 30, White);
+			ssd1306_Line(64, 30, 68, 25, White);
+		}
 		break;
-	case 2: // Z
+	case 1: // Y
 		// Draw a Horizontal Line
 		x1 = 25; y1 = 40;
 		x2 = 55; y2 = 40;
+		ssd1306_SetCursor(25, 50); // For arrow body
+		ssd1306_Line(x1, y1, x2, y2, White);
+		if (isNegative) {
+			ssd1306_SetCursor(x2, y2-3);
+			ssd1306_WriteString(">", Font_6x8, White);
+		}
+		else {
+			ssd1306_SetCursor(x1, y2-3);
+			ssd1306_WriteString("< ", Font_6x8, White);
+		}
+		break;
+	case 2: // Z
+		// Draw a Horizontal Line
+		if (!isNegative) {
+			ssd1306_SetCursor(15, 40);
+			ssd1306_WriteString("Face Screen Up", Font_6x8, White);
+		}
+		else {
+			ssd1306_SetCursor(15, 40);
+			ssd1306_WriteString("Face Screen Down", Font_6x8, White);
+		}
 		break;
 	}
-	ssd1306_SetCursor(25, 50); // For arrow head...maybe...? idk how this would work without testing
-	ssd1306_Line(x1, y1, x2, y2, White);
 	ssd1306_UpdateScreen();
 }

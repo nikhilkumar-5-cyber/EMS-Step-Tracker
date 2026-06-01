@@ -124,19 +124,15 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc1);
   ST_Protocol(); // Checks if ADXL is working properly
   DEFAULT_DISPLAY();
+  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, SET); // Stationary LED
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /* Testing */
-//	  testLEDS(); // Turns off and on the LEDS
-//	  testButtons(); // Prints which button is pressed
-//	  testADXL(); // Prints X, Y and Z values
-
 	  /* Real Software */
-	  UPDATE_DEFAULT_DISPLAY();
+	  DEFAULT_DISPLAY();
 	  if (HAL_GetTick()- lastValuesTime >= 58) {
 	  	  lastValuesTime = HAL_GetTick();
 	  	  getValues(); // Gets the x,y and z values
@@ -149,8 +145,8 @@ int main(void)
 	  }
 
 	  if (HAL_GPIO_ReadPin(Button_IN_RESET_GPIO_Port, Button_IN_RESET_Pin) == GPIO_PIN_RESET) {// Resets Counter when reset button is pressed
-	  		stepCount = 0;
-	  		distanceTravelled = 0;
+		  stepCount = 0;
+		  distanceTravelled = 0;
 	  }
 
 	  // Calculates the distance travelled
