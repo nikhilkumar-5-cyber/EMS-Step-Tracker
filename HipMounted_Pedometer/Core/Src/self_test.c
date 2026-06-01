@@ -53,4 +53,6 @@ void ST_Protocol(void) {
 		// Display "Not Working" on OLED
 		ST_DISPLAY(false);
 	}
+
+	HAL_Delay(2000);
 }

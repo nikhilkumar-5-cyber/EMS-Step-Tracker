@@ -22,6 +22,11 @@
 void DEFAULT_DISPLAY(void);
 
 /*
+ * @brief Updates Default display with real time values
+ * */
+void UPDATE_DEFAULT_DISPLAY(void);
+
+/*
  * @brief Displays the number of steps taken next to its title
  * */
 void display_STEP(void);

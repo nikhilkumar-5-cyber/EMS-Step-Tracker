@@ -16,7 +16,7 @@ uint8_t aboveThreshold = 0;
 uint8_t maxMagnitudeIndex = 0;
 STEP_CLOCK_t timeCard = {0};
 ADXL335_t lastSamples[ISO_SAMPLES] = {0}; //Local processing buffer
-ADXL335_t peakSeries[PEAK_SAMPLES] ={0};
+ADXL335_t peakSeries[PEAK_SAMPLES] = {0};
 uint8_t peakSeriesIndex = 0;
 
 
@@ -114,7 +114,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 			{
 				//Reset index and clear buffer
 				peakSeriesIndex = 0;
-				memset(peakSeries, 0, sizeof(peakSeries));
+				memset(peakSeries, 0, PEAK_SAMPLES);
 				//Equate (REF_SAMPLES)x samples to kick-start peakSeries
 				for (; peakSeriesIndex < REF_SAMPLES; peakSeriesIndex++)
 				{
@@ -133,10 +133,10 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		uint8_t peakDetected = 1;
 
 		//Most recent sample (SAMPLE_BUFF)
-		pushFront(peakSeries, sizeof(peakSeries), SAMPLE_BUFFER[0]); //WARNING: Subject to race conditions (technically)
+		pushFront(peakSeries, PEAK_SAMPLES, SAMPLE_BUFFER[0]); //WARNING: Subject to race conditions (technically)
 
 		//Update maxPeakVector
-		findMaxMagnitude(peakSeries, sizeof(peakSeries));
+		ADXL335_t maxVector = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
 
 		//Detect falling condition
 		for (uint8_t i = 1; i < POST_PEAK_DECREASE; i++)
@@ -154,9 +154,9 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 			timeCard.time = timeCard.end - timeCard.begin;
 			stepCount++;
 		}
-
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */
 	}
+
 }
 
 

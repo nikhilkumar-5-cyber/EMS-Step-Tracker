@@ -15,7 +15,7 @@
 /* Function Implementations */
 void calibration(void) {
 	Cali_Start_Display(); // Display going into calibration mode
-	HAL_Delay(500);
+	HAL_Delay(2000);
 
 	calibrationLoop(false);	// Calibrate positive directions
 	calibrationLoop(true);	// Calibrate negative directions

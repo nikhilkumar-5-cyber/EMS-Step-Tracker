@@ -15,7 +15,7 @@
 #include <string.h>
 
 /* Defines */
-#define PEAK_THRESHOLD 0.6 //acceleration [m/s^2]
+#define PEAK_THRESHOLD 1.0 //acceleration [m/s^2]
 #define PEAK_SAMPLES 10 //55% of sampling time
 #define POST_PEAK_DECREASE 3
 #define REF_SAMPLES 2 //Starting samples for peakSeries

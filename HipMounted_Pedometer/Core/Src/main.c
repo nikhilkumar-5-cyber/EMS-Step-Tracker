@@ -23,6 +23,7 @@
 #include "step_counting.h"
 #include "walking_pace.h"
 #include "calibration.h"
+#include "OLED_format.h"
 
 #include "testComponents.h"
 
@@ -103,7 +104,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  ssd1306_Init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -120,8 +120,10 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  ssd1306_Init();
   HAL_ADCEx_Calibration_Start(&hadc1);
   ST_Protocol(); // Checks if ADXL is working properly
+  DEFAULT_DISPLAY();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,6 +136,7 @@ int main(void)
 //	  testADXL(); // Prints X, Y and Z values
 
 	  /* Real Software */
+	  UPDATE_DEFAULT_DISPLAY();
 	  if (HAL_GetTick()- lastValuesTime >= 58) {
 	  	  lastValuesTime = HAL_GetTick();
 	  	  getValues(); // Gets the x,y and z values
@@ -142,12 +145,14 @@ int main(void)
 	  walkingPace(); // Determines Walking pace
 
 	  if (HAL_GPIO_ReadPin(Button_IN_CALI_GPIO_Port, Button_IN_CALI_Pin)==GPIO_PIN_RESET) {// Calibrates direction when button is pressed
-		  calibration();
+	  	  calibration();
 	  }
 
 	  if (HAL_GPIO_ReadPin(Button_IN_RESET_GPIO_Port, Button_IN_RESET_Pin) == GPIO_PIN_RESET) {// Resets Counter when reset button is pressed
 	  		stepCount = 0;
 	  		distanceTravelled = 0;
+	  		ssd1306_Fill(White);
+	  		ssd1306_UpdateScreen();
 	  }
 
 	  // Calculates the distance travelled

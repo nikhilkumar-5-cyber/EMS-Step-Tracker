@@ -34,6 +34,8 @@ void getValues(void) {
 	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
 	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
 	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
+	double magSquared = pow(RAW_SAMPLE.X, 2) + pow(RAW_SAMPLE.Y, 2) + pow(RAW_SAMPLE.Z, 2);
+	RAW_SAMPLE.magnitude = pow(magSquared, 0.5);
 	/* pushes last sample into sample buffer */
 	pushFront(SAMPLE_BUFFER, NUM_SAMPLES, RAW_SAMPLE);
 	indexVal++;
