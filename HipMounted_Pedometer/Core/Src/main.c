@@ -151,8 +151,6 @@ int main(void)
 	  if (HAL_GPIO_ReadPin(Button_IN_RESET_GPIO_Port, Button_IN_RESET_Pin) == GPIO_PIN_RESET) {// Resets Counter when reset button is pressed
 	  		stepCount = 0;
 	  		distanceTravelled = 0;
-	  		ssd1306_Fill(White);
-	  		ssd1306_UpdateScreen();
 	  }
 
 	  // Calculates the distance travelled
