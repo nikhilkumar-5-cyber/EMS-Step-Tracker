@@ -16,18 +16,19 @@
 /* Function Implementations */
 void ST_Protocol(void) {
 	/* Expected g change for X,Y and Z */
-	const float X_FACTORY_CHG = 454; // 454 ADC, 366 mV
-	const float Y_FACTORY_CHG = -448; //  -448 ADC, -361 mV
-	const float Z_FACTORY_CHG = -840; // -840 ADC, -677 mV
+	const float X_FACTORY_CHG = -461; // -454 ADC, -366 mV
+	const float Y_FACTORY_CHG = 448; //  448 ADC, 361 mV
+	const float Z_FACTORY_CHG = 820; // 840 ADC, 677 mV
 
 	/* Convert the current X, Y, Z values*/
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 	HAL_Delay(100);
 	getValues();
 	volatile float X_PRE_ST = ADC_VAL[0];
 	volatile float Y_PRE_ST = ADC_VAL[1];
 	volatile float Z_PRE_ST = ADC_VAL[2];
 	/* Activate ADXL ST Pin */
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
 	HAL_Delay(100);
 	/* get the new X,Y and Z values */
 	getValues();
@@ -35,16 +36,16 @@ void ST_Protocol(void) {
 	volatile float Y_POST_ST = ADC_VAL[1];
 	volatile float Z_POST_ST = ADC_VAL[2];
 	/* Disable ADXL ST Pin */
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
 	/* Calculate the difference between old and new values */
 	volatile float X_DELTA = X_POST_ST - X_PRE_ST;
 	volatile float Y_DELTA = Y_POST_ST - Y_PRE_ST;
 	volatile float Z_DELTA = Z_POST_ST - Z_PRE_ST;
 
-	if ((X_DELTA >= X_FACTORY_CHG-(0.1*X_FACTORY_CHG) && X_DELTA <= X_FACTORY_CHG+(0.1*X_FACTORY_CHG)) &&
-		(Y_DELTA >= Y_FACTORY_CHG+(0.1*Y_FACTORY_CHG) && Y_DELTA <= Y_FACTORY_CHG-(0.1*Y_FACTORY_CHG)) &&
-		(Z_DELTA >= Z_FACTORY_CHG+(0.1*Z_FACTORY_CHG) && Z_DELTA <= Z_FACTORY_CHG-(0.1*Z_FACTORY_CHG))) {
+	if ((X_DELTA >= X_FACTORY_CHG+(0.1*X_FACTORY_CHG) && X_DELTA <= X_FACTORY_CHG-(0.1*X_FACTORY_CHG)) &&
+		(Y_DELTA >= Y_FACTORY_CHG-(0.1*Y_FACTORY_CHG) && Y_DELTA <= Y_FACTORY_CHG+(0.1*Y_FACTORY_CHG)) &&
+		(Z_DELTA >= Z_FACTORY_CHG-(0.1*Z_FACTORY_CHG) && Z_DELTA <= Z_FACTORY_CHG+(0.1*Z_FACTORY_CHG))) {
 		// Display "Working" on OLED
 		ST_DISPLAY(true);
 	}
