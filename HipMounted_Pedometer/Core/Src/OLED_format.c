@@ -55,7 +55,7 @@ void UPDATE_DEFAULT_DISPLAY(void) {
 
 void display_STEP(void) {
 	/* Combine step count into the char array and then display it */
-	snprintf(STEPS_TAKEN, 5, "%d", stepCount);
+	snprintf(STEPS_TAKEN, 5, "%" PRIu32, stepCount);
 	ssd1306_SetCursor(86, 5);
 	ssd1306_WriteString(STEPS_TAKEN, Font_6x8, White);
 }

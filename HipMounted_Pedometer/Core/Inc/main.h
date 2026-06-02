@@ -28,9 +28,13 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ssd1306.h"
+#include "self_test.h"
+#include "walking_pace.h"
+#include "calibration.h"
+#include "OLED_format.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -53,8 +57,8 @@ typedef struct {
 } ADXL335_t;
 
 extern volatile ADXL335_t RAW_SAMPLE;
-extern volatile ADXL335_t CALIB_SAMPLE;
-extern volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
+extern ADXL335_t CALIB_SAMPLE;
+extern ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
 extern volatile uint32_t stepCount;
 extern volatile uint32_t indexVal; // Global index variable

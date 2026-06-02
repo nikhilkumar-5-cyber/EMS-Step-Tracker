@@ -18,19 +18,20 @@
 #define PEAK_THRESHOLD 1.0 //acceleration [m/s^2]
 #define PEAK_SAMPLES 10 //55% of sampling time
 #define POST_PEAK_DECREASE 3
-#define REF_SAMPLES 2 //Starting samples for peakSeries
+#define THRESHOLD_REF 2 //Starting samples for peakSeries
 #define MAX_MOVING_TIME 300 //50% of AVG_STEP [ms]
+#define MAX_STEP_TIME 800
 #define MIN_PEAK_TIME 200
 #define ISO_SAMPLES 3 //Local processing buffer size
 
 /* Externs */
 
 extern uint8_t VECTOR_STATE;
+extern ADXL335_t START_VECTOR;
+extern ADXL335_t END_VECTOR;
 
 /* Function prototypes */
 void updateLastSamples(ADXL335_t *dest); //Helper: Copies the most recent samples from SAMPLE_BUFFER into local processing buffer
-
-bool bothAbove(double a, double b, double threshold); //Helper: Check (2) values are above a nominal value
 
 void pushFront(ADXL335_t *dest, unsigned int size, ADXL335_t new_sample); //Helper: Push-back samples and equate [0] to new_sample
 

@@ -5,11 +5,11 @@
  *      Author: Nikhi
  */
 
-#ifndef INC_TESTCOMPONENTS_H_
-#define INC_TESTCOMPONENTS_H_
+#ifndef INC_TEST_COMPONENTS_H_
+#define INC_TEST_COMPONENTS_H_
 
 void testLEDS(void);
 void testButtons(void);
 void testADXL(void);
 
-#endif /* INC_TESTCOMPONENTS_H_ */
+#endif /* INC_TEST_COMPONENTS_H_ */

@@ -12,12 +12,14 @@ uint8_t vectorState = 0;
 
 /* Local variables */
 uint8_t referenceSamples = 0;
-uint8_t aboveThreshold = 0;
 uint8_t maxMagnitudeIndex = 0;
+uint8_t peakSeriesIndex = 0;
+//Custom types
 STEP_CLOCK_t timeCard = {0};
 ADXL335_t lastSamples[ISO_SAMPLES] = {0}; //Local processing buffer
 ADXL335_t peakSeries[PEAK_SAMPLES] = {0};
-uint8_t peakSeriesIndex = 0;
+ADXL335_t START_VECTOR = {0};
+ADXL335_t END_VECTOR = {0};
 
 
 void updateLastSamples(ADXL335_t *dest) { //Called from gaitCycle()
@@ -27,11 +29,6 @@ void updateLastSamples(ADXL335_t *dest) { //Called from gaitCycle()
 		lastSamples[i] = SAMPLE_BUFFER[i];  //WARNING: Subject to race conditions (technically)
 	}
 
-}
-
-bool bothAbove(double a, double b, double threshold) {
-
-	return a > threshold && b > threshold;
 }
 
 void pushFront(ADXL335_t *dest, unsigned int size, ADXL335_t new_sample) {
@@ -82,6 +79,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		//Progress to MOVING
 			vectorState = 1;
 			timeCard.begin = HAL_GetTick(); //Mark start time
+			START_VECTOR = lastSamples[0];
 		}
 		break; /* CHANGE STATE: Increasing acceleration (1,2,3...)) >> (1) */
 
@@ -97,13 +95,11 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 
 		else
 		{
-			for (uint8_t i = 0; i < REF_SAMPLES-1; i++)
+			uint8_t aboveThreshold = 1;
+
+			for (uint8_t i = 0; i < THRESHOLD_REF; i++)
 			{
-				if (bothAbove(lastSamples[i].magnitude, lastSamples[i+1].magnitude, PEAK_THRESHOLD)) //Check set# of samples are above threshold
-				{
-					aboveThreshold = 1;
-				}
-				else
+				if (lastSamples[i].magnitude <= PEAK_THRESHOLD) //Check set# of samples are above threshold
 				{
 					aboveThreshold = 0;
 					break; //Condition failed
@@ -114,9 +110,9 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 			{
 				//Reset index and clear buffer
 				peakSeriesIndex = 0;
-				memset(peakSeries, 0, PEAK_SAMPLES);
-				//Equate (REF_SAMPLES)x samples to kick-start peakSeries
-				for (; peakSeriesIndex < REF_SAMPLES; peakSeriesIndex++)
+				memset(peakSeries, 0, sizeof(peakSeries));
+				//Equate (THRESHOLD_REF)x samples to kick-start peakSeries
+				for (; peakSeriesIndex < THRESHOLD_REF; peakSeriesIndex++)
 				{
 					peakSeries[peakSeriesIndex] = lastSamples[peakSeriesIndex]; //FIFO start from last element; Avoid push-back
 				}
@@ -127,7 +123,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		}
 		break; /* CHANGE STATE: Timeout >> (0); OR Break threshold >> (2) */
 
-	case (2): //PEAKING::WIP
+	case (2): //PEAKING::OK?
 
 		/* Operating Principle: Detect a local peak, and a sharp decline */
 		uint8_t peakDetected = 1;
@@ -136,12 +132,12 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		pushFront(peakSeries, PEAK_SAMPLES, SAMPLE_BUFFER[0]); //WARNING: Subject to race conditions (technically)
 
 		//Update maxPeakVector
-		ADXL335_t maxVector = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
+		ADXL335_t MAX_VECTOR = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
 
 		//Detect falling condition
 		for (uint8_t i = 1; i < POST_PEAK_DECREASE; i++)
 		{
-			if (peakSeries[maxMagnitudeIndex+i].magnitude >= lastSamples[(maxMagnitudeIndex+i)+1].magnitude)
+			if (peakSeries[maxMagnitudeIndex+i].magnitude >= lastSamples[(maxMagnitudeIndex+i)+1].magnitude) //FIFO comparison
 			{
 				peakDetected = 0; //Not decreasing significantly enough
 			}
@@ -149,12 +145,34 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 
 		if (peakDetected && HAL_GetTick() - timeCard.peak_start >= MIN_PEAK_TIME) //FIX: Necessary waiting?
 		{
-			vectorState = 0;
-			timeCard.end = HAL_GetTick();
-			timeCard.time = timeCard.end - timeCard.begin;
-			stepCount++;
+			vectorState = 3;
 		}
+
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */
+
+	case (3): //DIVING::WIP
+
+		updateLastSamples(lastSamples);  //Move samples into local processing buffer
+
+		uint8_t belowThreshold = 1;
+
+		for (uint8_t i = 0; i < THRESHOLD_REF; i++)
+		{
+			if (lastSamples[i].magnitude <= PEAK_THRESHOLD) //Check set# of samples are below threshold
+			{
+				belowThreshold = 0;
+				break;
+			}
+		}
+
+		if (belowThreshold == 1 || HAL_GetTick() - timeCard.begin > MAX_STEP_TIME) {
+			timeCard.end = HAL_GetTick();
+			END_VECTOR = lastSamples[0];
+			stepCount++;
+			vectorState = 0;
+		}
+
+		break;
 	}
 
 }

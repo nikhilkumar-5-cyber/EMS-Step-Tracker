@@ -5,7 +5,7 @@
  *      Author: Nikhi
  */
 
-#include "testComponents.h"
+#include "test_components.h"
 #include "main.h"
 #include "stdio.h"
 

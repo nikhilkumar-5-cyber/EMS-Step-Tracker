@@ -17,15 +17,11 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <test_components.h>
 #include "main.h"
-#include "ssd1306.h"
-#include "self_test.h"
 #include "step_counting.h"
-#include "walking_pace.h"
-#include "calibration.h"
-#include "OLED_format.h"
+#include <inttypes.h>
 
-#include "testComponents.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -63,8 +59,8 @@ float adjVal[2][3] = { // Stores the calibration values
 };
 
 volatile ADXL335_t RAW_SAMPLE = {0};
-volatile ADXL335_t CALIB_SAMPLE = {0};
-volatile ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
+ADXL335_t CALIB_SAMPLE = {0};
+ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
 volatile uint32_t stepCount = 0; // Stores the count of steps
 volatile uint32_t indexVal = 0;
