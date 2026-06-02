@@ -17,8 +17,8 @@
 
 /* Defines */
 #define PEAK_THRESHOLD 1.02//acceleration [g]
-#define PEAK_SAMPLES 10 //55% of sampling time
-#define POST_PEAK_DECREASE 5
+#define PEAK_SAMPLES 20 //110% of sampling time
+#define POST_PEAK_DECREASE 3
 #define THRESHOLD_REF 2 //Starting samples for peakSeries
 #define MAX_MOVING_TIME 300 //50% of AVG_STEP [ms]
 #define MAX_STEP_TIME 800
