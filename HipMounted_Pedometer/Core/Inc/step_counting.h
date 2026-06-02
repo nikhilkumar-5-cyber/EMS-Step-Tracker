@@ -16,8 +16,8 @@
 #include "distance_est.h"
 
 /* Defines */
-#define PEAK_THRESHOLD 1.02//acceleration [g]
-#define PEAK_SAMPLES 20 //110% of sampling time
+#define PEAK_THRESHOLD 1.01//acceleration [g]
+#define PEAK_SAMPLES 30 //165% of sampling time
 #define POST_PEAK_DECREASE 3
 #define THRESHOLD_REF 2 //Starting samples for peakSeries
 #define MAX_MOVING_TIME 300 //50% of AVG_STEP [ms]

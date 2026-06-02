@@ -137,23 +137,27 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		//Update maxPeakVector
 		MAX_VECTOR = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
 
-		if ((maxMagnitudeIndex + POST_PEAK_DECREASE) < PEAK_SAMPLES)
-		{
-			peakDetected = 1;
+		//Ensure there are enough samples after the peak
 
-			for (uint8_t i = 1; i < POST_PEAK_DECREASE; i++) //Detect falling condition
-			{
-				if (peakSeries[maxMagnitudeIndex+i].magnitude >= lastSamples[(maxMagnitudeIndex+i)+1].magnitude) //FIFO comparison
-				{
-					peakDetected = 0; //Not decreasing significantly enough
-					break;
-				}
-			}
+		if (maxMagnitudeIndex < POST_PEAK_DECREASE)
+
+		{
+		    peakDetected = 0;
 		}
 
 		else
+
 		{
-			peakDetected = 0;
+		    //Detect falling condition
+		    for (uint8_t i = 0; i < POST_PEAK_DECREASE; i++)
+
+		    {
+		        if (peakSeries[maxMagnitudeIndex - i].magnitude <= peakSeries[maxMagnitudeIndex - i - 1].magnitude) //FIFO comparison
+		        {
+		            peakDetected = 0; //Not decreasing significantly enough
+		            break;
+		        }
+		    }
 		}
 
 		if (peakDetected && HAL_GetTick() - timeCard.peak_start >= MIN_PEAK_TIME) //FIX: Necessary waiting?
