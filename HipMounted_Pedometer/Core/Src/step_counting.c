@@ -89,7 +89,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 
 		updateLastSamples(lastSamples);  //Move samples into local processing buffer
 
-		if (HAL_GetTick() - timeCard.begin >= 10000) //Check for timeout (random, short increase in acceleration)
+		if (HAL_GetTick() - timeCard.begin >= MAX_STEP_TIME) //Check for timeout (random, short increase in acceleration)
 		{
 			vectorState = 0; //Return to IDLE
 		}

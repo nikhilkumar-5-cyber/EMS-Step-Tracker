@@ -28,6 +28,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ssd1306.h"
@@ -101,18 +102,18 @@ double ADC_to_g(uint32_t ADC_val);
 #define USART2_RX_GPIO_Port GPIOA
 #define X_IN_Pin GPIO_PIN_4
 #define X_IN_GPIO_Port GPIOA
-#define LED_RED_Pin GPIO_PIN_7
-#define LED_RED_GPIO_Port GPIOA
+#define LED_YELLOW_Pin GPIO_PIN_7
+#define LED_YELLOW_GPIO_Port GPIOA
 #define LED_GREEN_Pin GPIO_PIN_0
 #define LED_GREEN_GPIO_Port GPIOB
 #define ST_PIN_CONTROL_Pin GPIO_PIN_1
 #define ST_PIN_CONTROL_GPIO_Port GPIOB
 #define Button_IN_CALI_Pin GPIO_PIN_14
 #define Button_IN_CALI_GPIO_Port GPIOB
-#define LED_ORANGE_Pin GPIO_PIN_9
-#define LED_ORANGE_GPIO_Port GPIOA
-#define LED_YELLOW_Pin GPIO_PIN_7
-#define LED_YELLOW_GPIO_Port GPIOC
+#define LED_RED_Pin GPIO_PIN_9
+#define LED_RED_GPIO_Port GPIOA
+#define LED_ORANGE_Pin GPIO_PIN_7
+#define LED_ORANGE_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14

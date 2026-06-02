@@ -16,11 +16,11 @@
 #include "distance_est.h"
 
 /* Defines */
-#define PEAK_THRESHOLD 1.01//acceleration [g]
+#define PEAK_THRESHOLD 1.025//acceleration [g]
 #define PEAK_SAMPLES 30 //165% of sampling time
 #define POST_PEAK_DECREASE 3
 #define THRESHOLD_REF 2 //Starting samples for peakSeries
-#define MAX_MOVING_TIME 300 //50% of AVG_STEP [ms]
+#define MAX_MOVING_TIME 400 //50% of AVG_STEP [ms]
 #define MAX_STEP_TIME 800
 #define MIN_PEAK_TIME 200
 #define ISO_SAMPLES 3 //Local processing buffer size
@@ -31,6 +31,7 @@ extern uint8_t VECTOR_STATE;
 extern ADXL335_t START_VECTOR;
 extern ADXL335_t END_VECTOR;
 extern ADXL335_t MAX_VECTOR;
+extern ADXL335_t lastSamples[ISO_SAMPLES];
 
 /* Function prototypes */
 void updateLastSamples(ADXL335_t *dest); //Helper: Copies the most recent samples from SAMPLE_BUFFER into local processing buffer
