@@ -21,19 +21,26 @@ const double ADC_per_gVal = (sensitivity/refV)*(STM_res); // The ADC value betwe
 void getValues(void) {
 	get_ADC_Values();
 	/* Adjusts values based on calibrated values */
-	for (int i=0; i<3; i++) {
-		/* Checks if the g-val is positive or negative and then adjust value from calibrated values */
-		if (ADC_to_g(ADC_VAL[i])< 0) {
-			ADC_VAL[i] = ADC_VAL[i]+adjVal[1][i];
-		}
-		else {
-			ADC_VAL[i] = ADC_VAL[i]-adjVal[1][i];
-		}
-	}
-	/* Convert the X, Y and Z to g Values and Store them */
-	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
-	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
-	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
+	double x_g = ADC_to_g(ADC_VAL[0]);
+	double y_g = ADC_to_g(ADC_VAL[1]);
+	double z_g = ADC_to_g(ADC_VAL[2]);
+
+	RAW_SAMPLE.X = x_g + (x_g < 0 ? adjVal[1][0] : adjVal[0][0]);
+	RAW_SAMPLE.Y = y_g + (y_g < 0 ? adjVal[1][1] : adjVal[0][1]);
+	RAW_SAMPLE.Z = z_g + (z_g < 0 ? adjVal[1][2] : adjVal[0][2]);
+//	for (int i=0; i<3; i++) {
+//		/* Checks if the g-val is positive or negative and then adjust value from calibrated values */
+//		if (ADC_to_g(ADC_VAL[i])< 0) { // if negative
+//			ADC_VAL[i] = ADC_VAL[i]+adjVal[1][i];
+//		}
+//		else {
+//			ADC_VAL[i] = ADC_VAL[i]+adjVal[0][i];
+//		}
+//	}
+//	/* Convert the X, Y and Z to g Values and Store them */
+//	RAW_SAMPLE.X = ADC_to_g(ADC_VAL[0]);
+//	RAW_SAMPLE.Y = ADC_to_g(ADC_VAL[1]);
+//	RAW_SAMPLE.Z = ADC_to_g(ADC_VAL[2]);
 	double magSquared = pow(RAW_SAMPLE.X, 2) + pow(RAW_SAMPLE.Y, 2) + pow(RAW_SAMPLE.Z, 2);
 	RAW_SAMPLE.magnitude = pow(magSquared, 0.5);
 	/* pushes last sample into sample buffer */

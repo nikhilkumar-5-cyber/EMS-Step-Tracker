@@ -48,7 +48,7 @@ void calibrationLoop(bool forNegative) {
 		float absModVal = fabsf(modVal);
 		if (absModVal >= 0.9 && absModVal <= 1.1)
 		{
-			adjVal[adjIndexValue][directionsCompleted] = absModVal-1; // The difference from 1g
+			adjVal[adjIndexValue][directionsCompleted] = modVal-1; // The difference from 1g
 			directionPassed = true;
 		}
 		else

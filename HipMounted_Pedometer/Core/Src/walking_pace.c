@@ -13,7 +13,7 @@
 WalkingPace pace = STATIC; // Stores the current walking pace
 volatile uint16_t prevStepCount; // Stores the previous step count
 volatile uint32_t prevTime; // last time when pace was calculated
-const float timeGap = 0.1; // Difference in time before getting new step count [s]
+const float timeGap = 0.5; // Difference in time before getting new step count [s]
 const int walkingFreqMax = 3; // FIX | Stores the max walking frequency (steps per second)
 
 /* Function Implementations */
@@ -24,7 +24,7 @@ void walkingPace(void) {
 	}
 	prevTime = HAL_GetTick();
 
-	volatile double stepFrequency = ((stepCount-prevStepCount)/timeGap)*10; // gets steps per second
+	volatile double stepFrequency = ((stepCount-prevStepCount)/timeGap)*2; // gets steps per second
 	prevStepCount = stepCount;
 
 	/* Turn OFF all LEDS */
@@ -36,7 +36,7 @@ void walkingPace(void) {
 	if (stepFrequency <= 0) {
 		/* Set pace as Static and turn on its respective LED */
 		pace = STATIC;
-		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
 	}
 	else if (stepFrequency <= walkingFreqMax) {
 		/* Set pace as Walking and turn on its respective LED */

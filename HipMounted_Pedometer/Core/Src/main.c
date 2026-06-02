@@ -53,7 +53,7 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 uint16_t ADC_VAL[3] = {0,0,0}; // Store raw X, Y and Z values in a array
 float adjVal[2][3] = { // Stores the calibration values
-		{0, 0, 0},
+		{-0.04, -0.06, -0.12},
 		{0, 0, 0}
 };
 

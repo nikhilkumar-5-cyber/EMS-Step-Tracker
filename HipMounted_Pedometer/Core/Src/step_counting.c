@@ -146,33 +146,34 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 
 		if (peakDetected && HAL_GetTick() - timeCard.peak_start >= MIN_PEAK_TIME) //FIX: Necessary waiting?
 		{
-			vectorState = 3;
+			vectorState = 0;
+			stepCount++;
 		}
 
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */
 
 	case (3): //DIVING::WIP
 
-		updateLastSamples(lastSamples);  //Move samples into local processing buffer
-
-		uint8_t belowThreshold = 1;
-
-		for (uint8_t i = 0; i < THRESHOLD_REF; i++)
-		{
-			if (lastSamples[i].magnitude <= PEAK_THRESHOLD) //Check set# of samples are below threshold
-			{
-				belowThreshold = 0;
-				break;
-			}
-		}
-
-		if (belowThreshold == 1 || HAL_GetTick() - timeCard.begin > MAX_STEP_TIME) {
-			timeCard.end = HAL_GetTick();
-			END_VECTOR = lastSamples[0];
-			stepCount++;
-			addDistance(&MAX_VECTOR, &START_VECTOR, &END_VECTOR);
-			vectorState = 0;
-		}
+//		updateLastSamples(lastSamples);  //Move samples into local processing buffer
+//
+//		uint8_t belowThreshold = 1;
+//
+//		for (uint8_t i = 0; i < THRESHOLD_REF; i++)
+//		{
+//			if (lastSamples[i].magnitude <= PEAK_THRESHOLD) //Check set# of samples are below threshold
+//			{
+//				belowThreshold = 0;
+//				break;
+//			}
+//		}
+//
+//		if (belowThreshold == 1 || HAL_GetTick() - timeCard.begin > MAX_STEP_TIME) {
+//			timeCard.end = HAL_GetTick();
+//			END_VECTOR = lastSamples[0];
+//			stepCount++;
+//			addDistance(&MAX_VECTOR, &START_VECTOR, &END_VECTOR);
+//			vectorState = 0;
+//		}
 
 		break;
 	}
