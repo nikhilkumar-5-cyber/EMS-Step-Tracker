@@ -164,6 +164,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		{
 			vectorState = 0;
 			stepCount++;
+			addDistance();
 		}
 
 		break; /* CHANGE STATE: Minimum Time (≥200ms) && (2-3 samples < threshold) >> 0 */
