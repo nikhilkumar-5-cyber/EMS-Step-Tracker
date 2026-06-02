@@ -22,7 +22,6 @@
 #include "step_counting.h"
 #include <inttypes.h>
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -64,8 +63,7 @@ ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES] = {0};
 
 volatile uint32_t stepCount = 0; // Stores the count of steps
 volatile uint32_t indexVal = 0;
-volatile int distanceTravelled = 0; // Distance travelled [m]
-volatile uint32_t lastValuesTime =0;
+volatile uint32_t lastValuesTime = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

@@ -13,6 +13,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include <string.h>
+#include "distance_est.h"
 
 /* Defines */
 #define PEAK_THRESHOLD 1.0 //acceleration [m/s^2]
@@ -29,6 +30,7 @@
 extern uint8_t VECTOR_STATE;
 extern ADXL335_t START_VECTOR;
 extern ADXL335_t END_VECTOR;
+extern ADXL335_t MAX_VECTOR;
 
 /* Function prototypes */
 void updateLastSamples(ADXL335_t *dest); //Helper: Copies the most recent samples from SAMPLE_BUFFER into local processing buffer

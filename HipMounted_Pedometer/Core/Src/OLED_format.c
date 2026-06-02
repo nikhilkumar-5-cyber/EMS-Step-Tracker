@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "main.h"
 #include "walking_pace.h"
+#include "distance_est.h"
 
 /* Variable Definitions */
 char STEPS_TAKEN[5];
@@ -63,7 +64,7 @@ void display_STEP(void) {
 void display_DISTANCE(void) {
 	/* Combine distance into the char array and then display it */
 	// FIX: - need global variable for distance
-	snprintf(DISTANCE, sizeof(DISTANCE), "%d m", distanceTravelled);
+	snprintf(DISTANCE, sizeof(DISTANCE), "%.1fm", distanceTravelled); //truncates to 1dp
 	ssd1306_SetCursor(65, 25);
 	ssd1306_WriteString(DISTANCE, Font_6x8, White);
 }

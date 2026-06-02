@@ -62,7 +62,6 @@ extern ADXL335_t SAMPLE_BUFFER[NUM_SAMPLES];
 
 extern volatile uint32_t stepCount;
 extern volatile uint32_t indexVal; // Global index variable
-extern volatile int distanceTravelled; // Distance travelled [m]
 
 extern uint16_t ADC_VAL[3];
 extern float adjVal[2][3];

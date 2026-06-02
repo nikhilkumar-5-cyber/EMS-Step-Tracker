@@ -20,6 +20,7 @@ ADXL335_t lastSamples[ISO_SAMPLES] = {0}; //Local processing buffer
 ADXL335_t peakSeries[PEAK_SAMPLES] = {0};
 ADXL335_t START_VECTOR = {0};
 ADXL335_t END_VECTOR = {0};
+ADXL335_t MAX_VECTOR = {0};
 
 
 void updateLastSamples(ADXL335_t *dest) { //Called from gaitCycle()
@@ -132,7 +133,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		pushFront(peakSeries, PEAK_SAMPLES, SAMPLE_BUFFER[0]); //WARNING: Subject to race conditions (technically)
 
 		//Update maxPeakVector
-		ADXL335_t MAX_VECTOR = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
+		MAX_VECTOR = findMaxMagnitude(peakSeries, PEAK_SAMPLES);
 
 		//Detect falling condition
 		for (uint8_t i = 1; i < POST_PEAK_DECREASE; i++)
@@ -169,6 +170,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 			timeCard.end = HAL_GetTick();
 			END_VECTOR = lastSamples[0];
 			stepCount++;
+			addDistance(&MAX_VECTOR, &START_VECTOR, &END_VECTOR);
 			vectorState = 0;
 		}
 
