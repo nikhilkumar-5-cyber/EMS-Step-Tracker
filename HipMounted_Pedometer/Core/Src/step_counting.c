@@ -89,7 +89,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 
 		updateLastSamples(lastSamples);  //Move samples into local processing buffer
 
-		if (HAL_GetTick() - timeCard.begin >= MAX_MOVING_TIME) //Check for timeout (random, short increase in acceleration)
+		if (HAL_GetTick() - timeCard.begin >= 10000) //Check for timeout (random, short increase in acceleration)
 		{
 			vectorState = 0; //Return to IDLE
 		}
@@ -152,7 +152,7 @@ void trackGaitPhase() { //Called for each NEW sample; Prevents race-conditions~
 		    for (uint8_t i = 0; i < POST_PEAK_DECREASE; i++)
 
 		    {
-		        if (peakSeries[maxMagnitudeIndex - i].magnitude <= peakSeries[maxMagnitudeIndex - i - 1].magnitude) //FIFO comparison
+		        if (peakSeries[maxMagnitudeIndex - i].magnitude > peakSeries[maxMagnitudeIndex].magnitude) //FIFO comparison
 		        {
 		            peakDetected = 0; //Not decreasing significantly enough
 		            break;
