@@ -24,7 +24,7 @@ void walkingPace(void) {
 	}
 	prevTime = HAL_GetTick();
 
-	volatile int stepFrequency = ((stepCount-prevStepCount)/timeGap)*10; // gets steps per second
+	volatile double stepFrequency = ((stepCount-prevStepCount)/timeGap)*10; // gets steps per second
 	prevStepCount = stepCount;
 
 	/* Turn OFF all LEDS */
@@ -36,9 +36,9 @@ void walkingPace(void) {
 	if (stepFrequency <= 0) {
 		/* Set pace as Static and turn on its respective LED */
 		pace = STATIC;
-		HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 	}
-	else if (stepFrequency < walkingFreqMax) {
+	else if (stepFrequency <= walkingFreqMax) {
 		/* Set pace as Walking and turn on its respective LED */
 		pace = WALKING;
 		HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_SET);
@@ -46,6 +46,6 @@ void walkingPace(void) {
 	else {
 		/* Set pace as Running and turn on its respective LED */
 		pace = RUNNING;
-		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED_ORANGE_GPIO_Port, LED_ORANGE_Pin, GPIO_PIN_SET); // flashing
 	}
 }

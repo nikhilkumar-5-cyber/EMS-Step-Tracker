@@ -18,7 +18,7 @@ double avgStepSize = 0;
 
 void addDistance(ADXL335_t *peakVector, ADXL335_t *startVector, ADXL335_t *endVector) {
 
-	double stepSize = endVector->magnitude - startVector->magnitude;
+	double stepSize = fabs(endVector->magnitude - startVector->magnitude);
 
 	avgStepSize += STEP_SIZE_ALPHA * (stepSize - avgStepSize); //Exponential Moving Average
 
@@ -37,6 +37,6 @@ void addDistance(ADXL335_t *peakVector, ADXL335_t *startVector, ADXL335_t *endVe
 		alpha = 0.5;
 	}
 
-	distanceTravelled =+ peakVector->magnitude * alpha;
+	distanceTravelled += peakVector->magnitude * alpha;
 
 }

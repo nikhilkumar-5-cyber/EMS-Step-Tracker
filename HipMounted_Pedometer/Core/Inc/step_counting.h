@@ -16,7 +16,7 @@
 #include "distance_est.h"
 
 /* Defines */
-#define PEAK_THRESHOLD 1.0 //acceleration [m/s^2]
+#define PEAK_THRESHOLD 0.95 //acceleration [g]
 #define PEAK_SAMPLES 10 //55% of sampling time
 #define POST_PEAK_DECREASE 3
 #define THRESHOLD_REF 2 //Starting samples for peakSeries
