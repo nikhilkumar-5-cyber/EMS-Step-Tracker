@@ -157,8 +157,8 @@ void Arrow_Display(bool isNegative, uint16_t direction) {
 		}
 		else {
 			ssd1306_SetCursor(x2-3, y1);
-			ssd1306_Line(60, 25, 64, 30, White);
-			ssd1306_Line(64, 30, 68, 25, White);
+			ssd1306_Line(60, 25, 64, 20, White);
+			ssd1306_Line(64, 20, 68, 25, White);
 		}
 		break;
 	case 1: // Y
